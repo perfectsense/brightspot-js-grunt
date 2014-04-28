@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "extend": "~1.2.1"
+  },
+  "description": "Standard set of Grunt configurations for Brightspot projects.",
+  "keywords": [ "brightspot", "grunt" ],
+  "main": "bsp-grunt.js",
+  "name": "bsp-grunt",
+  "peerDependencies": {
+    "almond": "~0.2.9",
+    "grunt": "~0.4.4",
+    "grunt-bower-task": "~0.3.4",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-less": "~0.11.0",
+    "grunt-contrib-requirejs": "~0.4.3",
+    "requirejs": "~2.1.11"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/perfectsense/brightspot-js-grunt"
+  },
+  "version": "1.0.0"
+}

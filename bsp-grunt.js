@@ -71,6 +71,17 @@ module.exports = function(grunt, config) {
                         src: '**'
                     }
                 ]
+            },
+
+            styles: {
+                files: [
+                    {
+                        cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
+                        dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+                        expand: true,
+                        src: '**/*.css'
+                    }
+                ]
             }
         },
 
@@ -129,6 +140,7 @@ module.exports = function(grunt, config) {
         'copy:' + (hasRjsMain ? 'almond' : 'requirejs'),
         'copy:bower',
         'copy:scripts',
-        'requirejs:' + (hasRjsMain ? 'static' : 'dynamic')
+        'requirejs:' + (hasRjsMain ? 'static' : 'dynamic'),
+        'copy:styles'
     ]);
 };

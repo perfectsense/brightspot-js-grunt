@@ -1,5 +1,10 @@
 module.exports = function(grunt, config) {
-    grunt.initConfig(require('extend')(true, { }, {
+    var BOWER = require('bower');
+    var EXTEND = require('extend');
+    var _ = require('lodash');
+    var PATH = require('path');
+
+    grunt.initConfig(EXTEND(true, { }, {
         bsp: {
             maven: {
                 srcDir: 'src/main/webapp',
@@ -8,7 +13,6 @@ module.exports = function(grunt, config) {
             },
 
             bower: {
-                buildDir: '<%= bsp.maven.targetDir %>/bsp-grunt-bower'
             },
 
             styles: {
@@ -27,15 +31,6 @@ module.exports = function(grunt, config) {
             }
         },
 
-        bower: {
-            install: {
-                options: {
-                    cleanBowerDir: true,
-                    targetDir: '<%= bsp.bower.buildDir %>'
-                }
-            }
-        },
-
         copy: {
             almond: {
                 files: {
@@ -50,16 +45,7 @@ module.exports = function(grunt, config) {
             },
 
             bower: {
-                files: [
-                    {
-                        cwd: '<%= bower.install.options.targetDir %>',
-                        dest: '<%= bsp.scripts.devDir %>',
-                        expand: true,
-                        filter: 'isFile',
-                        flatten: true,
-                        src: '**'
-                    }
-                ]
+                files: [ ]
             },
 
             scripts: {
@@ -127,16 +113,100 @@ module.exports = function(grunt, config) {
         }
     }, (config || { })));
 
-    grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-bower-install-simple');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
+
+    grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
+        var done = this.async();
+
+        BOWER.commands.prune().
+
+            on('end', function() {
+                grunt.log.writeln("Pruned extraneous Bower packages.");
+                done();
+            }).
+
+            on('error', function(error) {
+                grunt.fail.warn(error);
+            });
+    });
+
+    grunt.task.registerTask('bower-configure-copy', 'Configure Bower package files to be copied.', function() {
+        var done = this.async();
+
+        BOWER.commands.list({ paths: true }).
+            on('end', function(pathsByName) {
+                var bowerDirectory = BOWER.config.directory;
+                var bowerFiles = grunt.config('copy.bower.files') || [ ];
+
+                _.each(pathsByName, function(paths, name) {
+                    var logs = [ ];
+                    var cwd = PATH.join(bowerDirectory, name);
+                    var files = (grunt.config('bsp.bower') || { })[name];
+
+                    if (files) {
+                        _.each(_.isArray(files) ? files : [ files ], function(file) {
+                            var prefix = file.type === 'styles' ? '<%= bsp.styles.minDir %>' : '<%= bsp.scripts.devDir %>';
+
+                            if (_.isPlainObject(file)) {
+                                file.dest = prefix + (file.dest ? '/' + file.dest : '');
+
+                            } else {
+                                file = {
+                                    dest: prefix,
+                                    expand: true,
+                                    src: file
+                                };
+                            }
+
+                            if (file.expand) {
+                                file.cwd = cwd + (file.cwd ? '/' + file.cwd : '');
+
+                            } else {
+                                file.src = _.map(_.isArray(file.src) ? file.src : [ file.src ], function(src) {
+                                    return cwd + (file.cwd ? '/' + file.cwd : '') + '/' + src;
+                                });
+                            }
+
+                            logs.push(JSON.stringify(file.src));
+                            bowerFiles.push(file);
+                        });
+
+                    } else if (paths) {
+                        _.each(_.isArray(paths) ? paths : [ paths ], function(path) {
+                            if (grunt.file.isFile(PATH.resolve(path))) {
+                                var basename = PATH.basename(path);
+
+                                logs.push(basename);
+                                bowerFiles.push({
+                                    dest: '<%= bsp.scripts.devDir %>/' + basename,
+                                    src: path
+                                });
+                            }
+                        });
+                    }
+
+                    grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
+                });
+
+                grunt.config('copy.bower.files', bowerFiles);
+                done();
+            }).
+
+            on('error', function(error) {
+                grunt.fail.warn(error);
+            });
+    });
 
     var hasRjsMain = !!grunt.config('bsp.scripts.rjsMain');
 
     grunt.registerTask('default', [
         'less:compile',
-        'bower:install',
+        'bower-prune',
+        'bower-install-simple',
+        'bower-configure-copy',
         'copy:' + (hasRjsMain ? 'almond' : 'requirejs'),
         'copy:bower',
         'copy:scripts',

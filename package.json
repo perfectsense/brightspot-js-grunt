@@ -6,7 +6,10 @@
     "path": "~0.4.9"
   },
   "description": "Standard set of Grunt configurations for Brightspot projects.",
-  "keywords": [ "brightspot", "grunt" ],
+  "keywords": [
+    "brightspot",
+    "grunt"
+  ],
   "main": "bsp-grunt.js",
   "name": "bsp-grunt",
   "peerDependencies": {
@@ -23,5 +26,5 @@
     "type": "git",
     "url": "git://github.com/perfectsense/brightspot-js-grunt"
   },
-  "version": "1.0.1"
+  "version": "1.0.2"
 }

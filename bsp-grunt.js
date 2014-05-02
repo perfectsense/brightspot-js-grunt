@@ -32,12 +32,6 @@ module.exports = function(grunt, config) {
         },
 
         copy: {
-            almond: {
-                files: {
-                    '<%= bsp.scripts.devDir %>/almond.js': 'node_modules/almond/almond.js'
-                }
-            },
-
             requirejs: {
                 files: {
                     '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
@@ -92,16 +86,6 @@ module.exports = function(grunt, config) {
         },
 
         requirejs: {
-            'static': {
-                options: {
-                    baseUrl: '<%= bsp.scripts.devDir %>',
-                    include: 'almond',
-                    name: '<%= bsp.scripts.rjsMain %>',
-                    optimize: 'uglify2',
-                    out: '<%= bsp.scripts.minDir %>/<%= bsp.scripts.rjsMain %>.js'
-                }
-            },
-
             dynamic: {
                 options: {
                     baseUrl: '<%= bsp.scripts.devDir %>',
@@ -200,17 +184,15 @@ module.exports = function(grunt, config) {
             });
     });
 
-    var hasRjsMain = !!grunt.config('bsp.scripts.rjsMain');
-
     grunt.registerTask('default', [
         'less:compile',
         'bower-prune',
         'bower-install-simple',
         'bower-configure-copy',
-        'copy:' + (hasRjsMain ? 'almond' : 'requirejs'),
+        'copy:requirejs',
         'copy:bower',
         'copy:scripts',
-        'requirejs:' + (hasRjsMain ? 'static' : 'dynamic'),
+        'requirejs:dynamic',
         'copy:styles'
     ]);
 };

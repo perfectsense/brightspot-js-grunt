@@ -6,7 +6,6 @@ Standard set of Grunt configuration for Brightspot projects using the following:
 - [Grunt](http://gruntjs.com/)
 - [LESS](http://lesscss.org/)
 - [RequireJS](http://requirejs.org/)
-  - [almond](https://github.com/jrburke/almond)
   - [r.js](http://requirejs.org/docs/optimization.html)
 
 # Usage
@@ -20,7 +19,7 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       }
     }
 
-`Gruntfile.js` (single minified CSS file from LESS and single static JS file using RequireJS and almond):
+`Gruntfile.js`:
 
     module.exports = function(grunt) {
       require('bsp-grunt')(grunt, {
@@ -31,29 +30,9 @@ Standard set of Grunt configuration for Brightspot projects using the following:
           },
           scripts: {
             dir: "assets/scripts",
-            rjsMain: "foo"
-          }
-        }
-      });
-    };
-
-`Gruntfile.js` (multiple minified CSS from LESS and multiple JS modules using RequireJS):
-
-    module.exports = function(grunt) {
-      require('bsp-grunt')(grunt, {
-        bsp: {
-          styles: {
-            dir: "assets/styles",
-            less: [ "foo.less", "bar.less" ]
-          },
-          scripts: {
-            dir: "assets/scripts",
             rjsModules: [
                 {
                     name: "foo"
-                },
-                {
-                    name: "bar"
                 }
             ]
           }

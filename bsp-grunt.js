@@ -90,6 +90,7 @@ module.exports = function(grunt, config) {
                 options: {
                     baseUrl: '<%= bsp.scripts.devDir %>',
                     dir: '<%= bsp.scripts.minDir %>',
+                    mainConfigFile: grunt.option('bsp.scripts.rjsConfig') ? '<%= bsp.scripts.srcDir %>/<%= bsp.scripts.rjsConfig %>' : null,
                     modules: '<%= bsp.scripts.rjsModules %>',
                     optimize: 'uglify2'
                 }

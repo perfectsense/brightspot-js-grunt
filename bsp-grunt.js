@@ -59,7 +59,10 @@ module.exports = function(grunt, config) {
                         cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
                         dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
                         expand: true,
-                        src: '**/*.css'
+                        src: [
+                            '**',
+                            '!**/*.js'
+                        ]
                     }
                 ]
             }
@@ -133,14 +136,12 @@ module.exports = function(grunt, config) {
 
                     if (files) {
                         _.each(_.isArray(files) ? files : [ files ], function(file) {
-                            var prefix = file.type === 'styles' ? '<%= bsp.styles.minDir %>' : '<%= bsp.scripts.devDir %>';
-
                             if (_.isPlainObject(file)) {
-                                file.dest = prefix + (file.dest ? '/' + file.dest : '');
+                                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
 
                             } else {
                                 file = {
-                                    dest: prefix,
+                                    dest: '<%= bsp.scripts.devDir %>',
                                     expand: true,
                                     flatten: true,
                                     src: file

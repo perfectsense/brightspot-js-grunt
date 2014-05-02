@@ -142,6 +142,7 @@ module.exports = function(grunt, config) {
                                 file = {
                                     dest: prefix,
                                     expand: true,
+                                    flatten: true,
                                     src: file
                                 };
                             }

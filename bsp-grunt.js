@@ -92,7 +92,6 @@ module.exports = function(grunt, config) {
                 options: {
                     baseUrl: '<%= bsp.scripts.devDir %>',
                     dir: '<%= bsp.scripts.minDir %>',
-                    mainConfigFile: grunt.option('bsp.scripts.rjsConfig') ? '<%= bsp.scripts.srcDir %>/<%= bsp.scripts.rjsConfig %>' : null,
                     modules: '<%= bsp.scripts.rjsModules %>',
                     optimize: 'uglify2'
                 }
@@ -121,6 +120,26 @@ module.exports = function(grunt, config) {
         }
 
         grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
+    });
+
+    grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
+        if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
+            var config = grunt.config('bsp.scripts.rjsConfig');
+
+            if (!config) {
+                var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
+
+                if (firstModule) {
+                    config = firstModule.name + '.js';
+                }
+            }
+
+            if (config) {
+                grunt.config('requirejs.dynamic.options.mainConfigFile', '<%= bsp.scripts.srcDir %>/' + config);
+            }
+        }
+
+        grunt.log.writeln('RequireJS main config: ' + grunt.config('requirejs.dynamic.options.mainConfigFile'));
     });
 
     grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
@@ -206,6 +225,7 @@ module.exports = function(grunt, config) {
 
     grunt.registerTask('default', [
         'bsp-config-dest',
+        'bsp-config-requirejs',
         'less:compile',
         'bower-prune',
         'bower-install-simple',

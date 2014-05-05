@@ -8,8 +8,7 @@ module.exports = function(grunt, config) {
         bsp: {
             maven: {
                 srcDir: 'src/main/webapp',
-                targetDir: 'target',
-                destDir: '<%= bsp.maven.targetDir %>/' + grunt.option('bsp-maven-build-finalName')
+                targetDir: 'target'
             },
 
             bower: {
@@ -106,6 +105,24 @@ module.exports = function(grunt, config) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
 
+    grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
+        if (!grunt.config('bsp.maven.destDir')) {
+            var buildName = grunt.option('bsp-maven-build-finalName');
+            var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
+
+            if (buildName) {
+                grunt.file.write(buildFile, buildName);
+
+            } else {
+                buildName = grunt.file.read(buildFile);
+            }
+
+            grunt.config('bsp.maven.destDir', '<%= bsp.maven.targetDir %>/' + buildName);
+        }
+
+        grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
+    });
+
     grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
         var done = this.async();
 
@@ -188,6 +205,7 @@ module.exports = function(grunt, config) {
     });
 
     grunt.registerTask('default', [
+        'bsp-config-dest',
         'less:compile',
         'bower-prune',
         'bower-install-simple',

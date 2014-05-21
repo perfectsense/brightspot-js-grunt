@@ -1,239 +1,239 @@
 module.exports = function(grunt, config) {
-    var BOWER = require('bower');
-    var EXTEND = require('extend');
-    var _ = require('lodash');
-    var PATH = require('path');
+  var BOWER = require('bower');
+  var EXTEND = require('extend');
+  var _ = require('lodash');
+  var PATH = require('path');
 
-    grunt.initConfig(EXTEND(true, { }, {
-        bsp: {
-            maven: {
-                srcDir: 'src/main/webapp',
-                targetDir: 'target'
-            },
+  grunt.initConfig(EXTEND(true, { }, {
+    bsp: {
+      maven: {
+        srcDir: 'src/main/webapp',
+        targetDir: 'target'
+      },
 
-            bower: {
-            },
+      bower: {
+      },
 
-            styles: {
-                dir: '',
-                less: [ ],
-                ext: '.min.css',
-                srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
-                minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
-            },
+      styles: {
+        dir: '',
+        less: [ ],
+        ext: '.min.css',
+        srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
+        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
+      },
 
-            scripts: {
-                dir: '',
-                srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
-                devDir: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
-                minDir: '<%= bsp.scripts.devDir %>.min'
-            }
-        },
+      scripts: {
+        dir: '',
+        srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
+        devDir: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
+        minDir: '<%= bsp.scripts.devDir %>.min'
+      }
+    },
 
-        copy: {
-            requirejs: {
-                files: {
-                    '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
-                }
-            },
-
-            bower: {
-                files: [ ]
-            },
-
-            scripts: {
-                files: [
-                    {
-                        cwd: '<%= bsp.scripts.srcDir %>',
-                        dest: '<%= bsp.scripts.devDir %>',
-                        expand: true,
-                        src: '**'
-                    }
-                ]
-            },
-
-            styles: {
-                files: [
-                    {
-                        cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
-                        dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
-                        expand: true,
-                        src: [
-                            '**',
-                            '!**/*.js'
-                        ]
-                    }
-                ]
-            }
-        },
-
-        less: {
-            compile: {
-                files: [
-                    {
-                        cwd: '<%= bsp.styles.srcDir %>',
-                        dest: '<%= bsp.styles.minDir %>',
-                        expand: true,
-                        ext: '<%= bsp.styles.ext %>',
-                        extDot: 'last',
-                        src: '<%= bsp.styles.less %>'
-                    }
-                ],
-
-                options: {
-                    cleancss: true,
-                    compress: true
-                }
-            }
-        },
-
-        requirejs: {
-            dynamic: {
-                options: {
-                    baseUrl: '<%= bsp.scripts.devDir %>',
-                    dir: '<%= bsp.scripts.minDir %>',
-                    modules: '<%= bsp.scripts.rjsModules %>',
-                    optimize: 'uglify2'
-                }
-            }
+    copy: {
+      requirejs: {
+        files: {
+          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
         }
-    }, (config || { })));
+      },
 
-    grunt.loadNpmTasks('grunt-bower-install-simple');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
+      bower: {
+        files: [ ]
+      },
 
-    grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
-        if (!grunt.config('bsp.maven.destDir')) {
-            var buildName = grunt.option('bsp-maven-build-finalName');
-            var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
+      scripts: {
+        files: [
+          {
+            cwd: '<%= bsp.scripts.srcDir %>',
+            dest: '<%= bsp.scripts.devDir %>',
+            expand: true,
+            src: '**'
+          }
+        ]
+      },
 
-            if (buildName) {
-                grunt.file.write(buildFile, buildName);
+      styles: {
+        files: [
+          {
+            cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
+            dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+            expand: true,
+            src: [
+                '**',
+                '!**/*.js'
+            ]
+          }
+        ]
+      }
+    },
 
-            } else {
-                buildName = grunt.file.read(buildFile);
-            }
+    less: {
+      compile: {
+        files: [
+          {
+            cwd: '<%= bsp.styles.srcDir %>',
+            dest: '<%= bsp.styles.minDir %>',
+            expand: true,
+            ext: '<%= bsp.styles.ext %>',
+            extDot: 'last',
+            src: '<%= bsp.styles.less %>'
+          }
+        ],
 
-            grunt.config('bsp.maven.destDir', '<%= bsp.maven.targetDir %>/' + buildName);
+        options: {
+          cleancss: true,
+          compress: true
         }
+      }
+    },
 
-        grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
-    });
-
-    grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
-        if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
-            var config = grunt.config('bsp.scripts.rjsConfig');
-
-            if (!config) {
-                var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
-
-                if (firstModule) {
-                    config = firstModule.name + '.js';
-                }
-            }
-
-            if (config) {
-                grunt.config('requirejs.dynamic.options.mainConfigFile', '<%= bsp.scripts.srcDir %>/' + config);
-            }
+    requirejs: {
+      dynamic: {
+        options: {
+          baseUrl: '<%= bsp.scripts.devDir %>',
+          dir: '<%= bsp.scripts.minDir %>',
+          modules: '<%= bsp.scripts.rjsModules %>',
+          optimize: 'uglify2'
         }
+      }
+    }
+  }, (config || { })));
 
-        grunt.log.writeln('RequireJS main config: ' + grunt.config('requirejs.dynamic.options.mainConfigFile'));
-    });
+  grunt.loadNpmTasks('grunt-bower-install-simple');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
-    grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
-        var done = this.async();
+  grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
+    if (!grunt.config('bsp.maven.destDir')) {
+      var buildName = grunt.option('bsp-maven-build-finalName');
+      var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
 
-        BOWER.commands.prune().
+      if (buildName) {
+        grunt.file.write(buildFile, buildName);
 
-            on('end', function() {
-                grunt.log.writeln("Pruned extraneous Bower packages.");
-                done();
-            }).
+      } else {
+        buildName = grunt.file.read(buildFile);
+      }
 
-            on('error', function(error) {
-                grunt.fail.warn(error);
-            });
-    });
+      grunt.config('bsp.maven.destDir', '<%= bsp.maven.targetDir %>/' + buildName);
+    }
 
-    grunt.task.registerTask('bower-configure-copy', 'Configure Bower package files to be copied.', function() {
-        var done = this.async();
+    grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
+  });
 
-        BOWER.commands.list({ paths: true }).
-            on('end', function(pathsByName) {
-                var bowerDirectory = BOWER.config.directory;
-                var bowerFiles = grunt.config('copy.bower.files') || [ ];
+  grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
+    if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
+      var config = grunt.config('bsp.scripts.rjsConfig');
 
-                _.each(pathsByName, function(paths, name) {
-                    var logs = [ ];
-                    var cwd = PATH.join(bowerDirectory, name);
-                    var files = (grunt.config('bsp.bower') || { })[name];
+      if (!config) {
+        var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
 
-                    if (files) {
-                        _.each(_.isArray(files) ? files : [ files ], function(file) {
-                            if (_.isPlainObject(file)) {
-                                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
+        if (firstModule) {
+          config = firstModule.name + '.js';
+        }
+      }
 
-                            } else {
-                                file = {
-                                    dest: '<%= bsp.scripts.devDir %>',
-                                    expand: true,
-                                    flatten: true,
-                                    src: file
-                                };
-                            }
+      if (config) {
+        grunt.config('requirejs.dynamic.options.mainConfigFile', '<%= bsp.scripts.srcDir %>/' + config);
+      }
+    }
 
-                            if (file.expand) {
-                                file.cwd = cwd + (file.cwd ? '/' + file.cwd : '');
+    grunt.log.writeln('RequireJS main config: ' + grunt.config('requirejs.dynamic.options.mainConfigFile'));
+  });
 
-                            } else {
-                                file.src = _.map(_.isArray(file.src) ? file.src : [ file.src ], function(src) {
-                                    return cwd + (file.cwd ? '/' + file.cwd : '') + '/' + src;
-                                });
-                            }
+  grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
+    var done = this.async();
 
-                            logs.push(JSON.stringify(file.src));
-                            bowerFiles.push(file);
-                        });
+    BOWER.commands.prune().
 
-                    } else if (paths) {
-                        _.each(_.isArray(paths) ? paths : [ paths ], function(path) {
-                            if (grunt.file.isFile(PATH.resolve(path))) {
-                                var basename = PATH.basename(path);
+      on('end', function() {
+          grunt.log.writeln("Pruned extraneous Bower packages.");
+          done();
+      }).
 
-                                logs.push(basename);
-                                bowerFiles.push({
-                                    dest: '<%= bsp.scripts.devDir %>/' + basename,
-                                    src: path
-                                });
-                            }
-                        });
-                    }
+      on('error', function(error) {
+          grunt.fail.warn(error);
+      });
+  });
 
-                    grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
+  grunt.task.registerTask('bower-configure-copy', 'Configure Bower package files to be copied.', function() {
+    var done = this.async();
+
+    BOWER.commands.list({ paths: true }).
+      on('end', function(pathsByName) {
+        var bowerDirectory = BOWER.config.directory;
+        var bowerFiles = grunt.config('copy.bower.files') || [ ];
+
+        _.each(pathsByName, function(paths, name) {
+          var logs = [ ];
+          var cwd = PATH.join(bowerDirectory, name);
+          var files = (grunt.config('bsp.bower') || { })[name];
+
+          if (files) {
+            _.each(_.isArray(files) ? files : [ files ], function(file) {
+              if (_.isPlainObject(file)) {
+                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
+
+              } else {
+                file = {
+                  dest: '<%= bsp.scripts.devDir %>',
+                  expand: true,
+                  flatten: true,
+                  src: file
+                };
+              }
+
+              if (file.expand) {
+                file.cwd = cwd + (file.cwd ? '/' + file.cwd : '');
+
+              } else {
+                file.src = _.map(_.isArray(file.src) ? file.src : [ file.src ], function(src) {
+                    return cwd + (file.cwd ? '/' + file.cwd : '') + '/' + src;
                 });
+              }
 
-                grunt.config('copy.bower.files', bowerFiles);
-                done();
-            }).
-
-            on('error', function(error) {
-                grunt.fail.warn(error);
+              logs.push(JSON.stringify(file.src));
+              bowerFiles.push(file);
             });
-    });
 
-    grunt.registerTask('default', [
-        'bsp-config-dest',
-        'bsp-config-requirejs',
-        'less:compile',
-        'bower-prune',
-        'bower-install-simple',
-        'bower-configure-copy',
-        'copy:requirejs',
-        'copy:bower',
-        'copy:scripts',
-        'requirejs:dynamic',
-        'copy:styles'
-    ]);
+          } else if (paths) {
+            _.each(_.isArray(paths) ? paths : [ paths ], function(path) {
+              if (grunt.file.isFile(PATH.resolve(path))) {
+                var basename = PATH.basename(path);
+
+                logs.push(basename);
+                bowerFiles.push({
+                  dest: '<%= bsp.scripts.devDir %>/' + basename,
+                  src: path
+                });
+              }
+            });
+          }
+
+          grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
+        });
+
+        grunt.config('copy.bower.files', bowerFiles);
+        done();
+      }).
+
+      on('error', function(error) {
+        grunt.fail.warn(error);
+      });
+  });
+
+  grunt.registerTask('default', [
+    'bsp-config-dest',
+    'bsp-config-requirejs',
+    'less:compile',
+    'bower-prune',
+    'bower-install-simple',
+    'bower-configure-copy',
+    'copy:requirejs',
+    'copy:bower',
+    'copy:scripts',
+    'requirejs:dynamic',
+    'copy:styles'
+  ]);
 };

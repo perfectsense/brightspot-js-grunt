@@ -19,6 +19,7 @@ module.exports = function(grunt, config) {
         less: [ ],
         ext: '.min.css',
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
+        compiledLessDir: '<%= bsp.maven.targetDir %>/grunt-compiledLess',
         minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
       },
 
@@ -80,7 +81,7 @@ module.exports = function(grunt, config) {
         files: [
           {
             cwd: '<%= bsp.styles.srcDir %>',
-            dest: '<%= bsp.styles.minDir %>',
+            dest: '<%= bsp.styles.compiledLessDir %>',
             expand: true,
             ext: '<%= bsp.styles.ext %>',
             extDot: 'last',
@@ -95,6 +96,19 @@ module.exports = function(grunt, config) {
       }
     },
 
+    autoprefixer: {
+      process: {
+        files: [
+          {
+            cwd: '<%= bsp.styles.compiledLessDir %>',
+            dest: '<%= bsp.styles.minDir %>',
+            expand: true,
+            src: '**/*'
+          }
+        ]
+      }
+    },
+
     requirejs: {
       dynamic: {
         options: {
@@ -104,10 +118,28 @@ module.exports = function(grunt, config) {
           optimize: 'uglify2'
         }
       }
+    },
+
+    browserify: {
+      autoprefixer: {
+        files: [
+          {
+            dest: '<%= bsp.scripts.devDir %>/autoprefixer.js',
+            src: 'node_modules/grunt-autoprefixer/node_modules/autoprefixer/lib/autoprefixer.js'
+          }
+        ],
+        options: {
+          bundleOptions: {
+            standalone: 'autoprefixer'
+          }
+        }
+      }
     }
   }, (config || { })));
 
+  grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-bower-install-simple');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
@@ -235,6 +267,7 @@ module.exports = function(grunt, config) {
     'bsp-config-dest',
     'bsp-config-requirejs',
     'less:compile',
+    'autoprefixer:process',
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',
@@ -243,6 +276,7 @@ module.exports = function(grunt, config) {
     'copy:scripts',
     'requirejs:dynamic',
     'copy:less',
+    'browserify:autoprefixer',
     'copy:styles'
   ]);
 };

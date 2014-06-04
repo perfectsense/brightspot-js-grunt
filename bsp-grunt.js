@@ -64,6 +64,14 @@ module.exports = function(grunt, config) {
             ]
           }
         ]
+      },
+
+      less: {
+        files: {
+          '<%= bsp.scripts.devDir %>/less.js':
+              'node_modules/grunt-contrib-less/node_modules/less/' +
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
+        }
       }
     },
 
@@ -234,6 +242,7 @@ module.exports = function(grunt, config) {
     'copy:bower',
     'copy:scripts',
     'requirejs:dynamic',
+    'copy:less',
     'copy:styles'
   ]);
 };

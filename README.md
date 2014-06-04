@@ -15,7 +15,7 @@ Standard set of Grunt configuration for Brightspot projects using the following:
     {
       "name": "foo",
       "devDependencies": {
-        "bsp-grunt": "~1.0.4"
+        "bsp-grunt": "1.0.5"
       }
     }
 

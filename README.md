@@ -2,6 +2,7 @@
 
 Standard set of Grunt configuration for Brightspot projects using the following:
 
+- [Autoprefixer](https://github.com/ai/autoprefixer)
 - [Brightspot](http://www.brightspotcms.com/)
 - [Grunt](http://gruntjs.com/)
 - [LESS](http://lesscss.org/)

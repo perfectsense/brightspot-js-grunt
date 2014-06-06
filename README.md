@@ -20,6 +20,15 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       }
     }
 
+`bower.json` (for project-specific dependencies):
+
+    {
+      "name": "foo",
+      "dependencies": {
+        "jquery": "~1.11.0"
+      }
+    }
+
 `Gruntfile.js`:
 
     module.exports = function(grunt) {
@@ -41,11 +50,18 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       });
     };
 
-`bower.json` (for project-specific dependencies):
+Note that `require('bsp-grunt')(grunt, { ... })` replaces `grunt.initConfig({ ... })`. For example, to use  `grunt-contrib-uglify` and provide its configuration:
 
-    {
-      "name": "foo",
-      "dependencies": {
-        "jquery": "~1.11.0"
-      }
-    }
+    module.exports = function(grunt) {
+      require('bsp-grunt')(grunt, {
+        ...,
+        uglify: { ... }
+      });
+
+      grunt.loadNpmTasks('grunt-contrib-uglify');
+
+      grunt.registerTask('default', [
+        'bsp',
+        'uglify'
+      ])
+    };

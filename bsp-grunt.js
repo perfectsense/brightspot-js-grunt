@@ -124,13 +124,23 @@ module.exports = function(grunt, config) {
       autoprefixer: {
         files: [
           {
-            dest: '<%= bsp.scripts.devDir %>/autoprefixer.js',
+            dest: '<%= bsp.scripts.devDir %>/less-dev.js',
             src: 'node_modules/grunt-autoprefixer/node_modules/autoprefixer/lib/autoprefixer.js'
           }
         ],
+
         options: {
           bundleOptions: {
             standalone: 'autoprefixer'
+          },
+
+          postBundleCB: function(err, src, next) {
+            src += 'window.less = window.less || { };';
+            src += 'window.less.env = "development";';
+            src += 'window.less.postProcessor = function(css) { return autoprefixer(';
+            src += _.map(grunt.config('autoprefixer.process.options.browsers') || [ ], function(browser) { return '"' + browser + '"'; }).join(', ');
+            src += ').process(css).css; };';
+            next(err, src);
           }
         }
       }

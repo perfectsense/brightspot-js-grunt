@@ -273,7 +273,7 @@ module.exports = function(grunt, config) {
       });
   });
 
-  grunt.registerTask('default', [
+  grunt.registerTask('bsp', [
     'bsp-config-dest',
     'bsp-config-requirejs',
     'less:compile',
@@ -288,5 +288,9 @@ module.exports = function(grunt, config) {
     'copy:less',
     'browserify:autoprefixer',
     'copy:styles'
+  ]);
+
+  grunt.registerTask('default', [
+    'bsp'
   ]);
 };

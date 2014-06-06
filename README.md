@@ -11,6 +11,8 @@ Standard set of Grunt configuration for Brightspot projects using the following:
 
 # Usage
 
+## NPM
+
 `package.json` (for Grunt dependencies):
 
     {
@@ -20,6 +22,8 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       }
     }
 
+## Bower
+
 `bower.json` (for project-specific dependencies):
 
     {
@@ -28,6 +32,8 @@ Standard set of Grunt configuration for Brightspot projects using the following:
         "jquery": "~1.11.0"
       }
     }
+
+## Grunt
 
 `Gruntfile.js`:
 
@@ -65,3 +71,26 @@ Note that `require('bsp-grunt')(grunt, { ... })` replaces `grunt.initConfig({ ..
         'uglify'
       ])
     };
+
+## Autoprefixer
+
+To change the supported list of browsers (see [https://github.com/ai/autoprefixer#browsers](https://github.com/ai/autoprefixer#browsers) for the) syntax):
+
+    module.exports = function(grunt) {
+      require('bsp-grunt')(grunt, {
+        ...,
+        autoprefixer: {
+          process: {
+            options: {
+              browsers: [ 'last 1 version', '> 1%', 'Explorer 7' ]
+            }
+          }
+        }
+      });
+
+## HTML
+
+While developing locally, use the following to compile LESS and apply Autoprefixer on the fly:
+
+    <script type="text/javascript" src="/assets/scripts/less-dev.js"></script>
+    <script type="text/javascript" src="/assets/scripts/less.js"></script>

@@ -103,7 +103,7 @@ module.exports = function(grunt, config) {
             cwd: '<%= bsp.styles.compiledLessDir %>',
             dest: '<%= bsp.styles.minDir %>',
             expand: true,
-            src: '**/*'
+            src: '**/*<%= bsp.styles.ext %>'
           }
         ]
       }

@@ -109,6 +109,16 @@ module.exports = function(grunt, config) {
       }
     },
 
+    jshint: {
+      all: [
+        'Gruntfile.js',
+        '<%= bsp.scripts.srcDir %>/**/*.js'
+      ],
+      options: {
+        jshintrc: '.jshintrc'
+      }
+    },
+
     requirejs: {
       dynamic: {
         options: {
@@ -151,6 +161,7 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-bower-install-simple');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
@@ -278,6 +289,7 @@ module.exports = function(grunt, config) {
     'bsp-config-requirejs',
     'less:compile',
     'autoprefixer:process',
+    'jshint',
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',

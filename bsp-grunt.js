@@ -109,16 +109,6 @@ module.exports = function(grunt, config) {
       }
     },
 
-    jshint: {
-      all: [
-        'Gruntfile.js',
-        '<%= bsp.scripts.srcDir %>/**/*.js'
-      ],
-      options: {
-        jshintrc: '.jshintrc'
-      }
-    },
-
     requirejs: {
       dynamic: {
         options: {
@@ -181,6 +171,22 @@ module.exports = function(grunt, config) {
     }
 
     grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
+  });
+
+  grunt.task.registerTask('bsp-config-jshint', 'Configure jshint.', function() {
+
+    var jshintrc = grunt.config('bsp.scripts.jshintrc');
+
+    if (typeof(jshintrc) !==  'undefined') {
+      grunt.config('jshint.all', ['Gruntfile.js', '<%= bsp.scripts.srcDir %>/**/*.js']);
+      grunt.config('jshint.options.jshintrc', jshintrc);
+
+      grunt.log.writeln('jshint: using ' + grunt.config('jshint.options.jshintrc'));
+    } else {
+      grunt.log.writeln('jshint: no .jshintrc specified, no jshint performed');
+      grunt.config('jshint.all', {});
+    }
+
   });
 
   grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
@@ -286,6 +292,7 @@ module.exports = function(grunt, config) {
 
   grunt.registerTask('bsp', [
     'bsp-config-dest',
+    'bsp-config-jshint',
     'bsp-config-requirejs',
     'less:compile',
     'autoprefixer:process',

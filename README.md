@@ -41,14 +41,16 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       require('bsp-grunt')(grunt, {
         bsp: {
           styles: {
-            dir: "assets/styles",
-            less: "foo.less"
+            dir: 'assets/styles',
+            less: 'foo.less'
           },
           scripts: {
-            dir: "assets/scripts",
+            dir: 'assets/scripts',
+            // to jshint your js source folder, specify the .jshintrc file based on the root path. If not .jshintrc file is passed, there will be no jshint
+            jshintrc: '.jshintrc'
             rjsModules: [
                 {
-                    name: "foo"
+                    name: 'foo'
                 }
             ]
           }

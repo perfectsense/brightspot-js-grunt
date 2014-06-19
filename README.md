@@ -47,7 +47,7 @@ Standard set of Grunt configuration for Brightspot projects using the following:
           scripts: {
             dir: 'assets/scripts',
             // to jshint your js source folder, specify the .jshintrc file based on the root path. If not .jshintrc file is passed, there will be no jshint
-            jshintrc: '.jshintrc'
+            jshintrc: '.jshintrc',
             rjsModules: [
                 {
                     name: 'foo'

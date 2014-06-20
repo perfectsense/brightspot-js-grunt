@@ -56,12 +56,11 @@ module.exports = function(grunt, config) {
       styles: {
         files: [
           {
-            cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
-            dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+            cwd: '<%= bsp.styles.srcDir %>',
+            dest: '<%= bsp.styles.minDir %>',
             expand: true,
             src: [
-                '**',
-                '!**/*.js'
+                '**'
             ]
           }
         ]
@@ -71,7 +70,7 @@ module.exports = function(grunt, config) {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
               'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
     },
@@ -80,7 +79,7 @@ module.exports = function(grunt, config) {
       compile: {
         files: [
           {
-            cwd: '<%= bsp.styles.srcDir %>',
+            cwd: '<%= bsp.styles.minDir %>',
             dest: '<%= bsp.styles.compiledLessDir %>',
             expand: true,
             ext: '<%= bsp.styles.ext %>',
@@ -215,7 +214,7 @@ module.exports = function(grunt, config) {
     BOWER.commands.prune().
 
       on('end', function() {
-          grunt.log.writeln("Pruned extraneous Bower packages.");
+          grunt.log.writeln('Pruned extraneous Bower packages.');
           done();
       }).
 
@@ -239,9 +238,9 @@ module.exports = function(grunt, config) {
 
           if (files) {
             _.each(_.isArray(files) ? files : [ files ], function(file) {
-              if (_.isPlainObject(file)) {
-                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
 
+              if (_.isPlainObject(file)) {
+                file.dest = '<%= bsp.maven.destDir %>' + (file.dest ? '/' + file.dest : '');
               } else {
                 file = {
                   dest: '<%= bsp.scripts.devDir %>',
@@ -253,7 +252,6 @@ module.exports = function(grunt, config) {
 
               if (file.expand) {
                 file.cwd = cwd + (file.cwd ? '/' + file.cwd : '');
-
               } else {
                 file.src = _.map(_.isArray(file.src) ? file.src : [ file.src ], function(src) {
                     return cwd + (file.cwd ? '/' + file.cwd : '') + '/' + src;
@@ -270,6 +268,7 @@ module.exports = function(grunt, config) {
                 var basename = PATH.basename(path);
 
                 logs.push(basename);
+
                 bowerFiles.push({
                   dest: '<%= bsp.scripts.devDir %>/' + basename,
                   src: path
@@ -278,7 +277,7 @@ module.exports = function(grunt, config) {
             });
           }
 
-          grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
+          grunt.log.writeln('Configured ' + name + ': ' + logs.join(', '));
         });
 
         grunt.config('copy.bower.files', bowerFiles);
@@ -291,20 +290,25 @@ module.exports = function(grunt, config) {
   });
 
   grunt.registerTask('bsp', [
+    /* configure tasks to figure out correct directories */
     'bsp-config-dest',
     'bsp-config-requirejs',
-    'less:compile',
-    'autoprefixer:process',
+    /* bower tasks to get packages and setup paths */
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',
+    /* copy everything down into target, where we will do the build work */
     'copy:requirejs',
     'copy:bower',
     'copy:scripts',
-    'requirejs:dynamic',
     'copy:less',
-    'browserify:autoprefixer',
-    'copy:styles'
+    'copy:styles',
+    /* creates compiled JS out of the main require file, gets everything into a .min folder by default */
+    'requirejs:dynamic',
+    /* compiles less and creates the autoprefixer rules on the resulting css file */
+    'less:compile',
+    'autoprefixer:process',
+    'browserify:autoprefixer'
   ]);
 
   grunt.registerTask('bsp-verify', [
@@ -315,4 +319,5 @@ module.exports = function(grunt, config) {
   grunt.registerTask('default', [
     'bsp-verify','bsp'
   ]);
+
 };

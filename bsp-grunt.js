@@ -292,11 +292,9 @@ module.exports = function(grunt, config) {
 
   grunt.registerTask('bsp', [
     'bsp-config-dest',
-    'bsp-config-jshint',
     'bsp-config-requirejs',
     'less:compile',
     'autoprefixer:process',
-    'jshint',
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',
@@ -309,7 +307,12 @@ module.exports = function(grunt, config) {
     'copy:styles'
   ]);
 
+  grunt.registerTask('bsp-verify', [
+    'bsp-config-jshint',
+    'jshint'
+  ]);
+
   grunt.registerTask('default', [
-    'bsp'
+    'bsp-verify','bsp'
   ]);
 };

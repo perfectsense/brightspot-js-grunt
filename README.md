@@ -33,6 +33,31 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       }
     }
 
+If you specify bower dependencies, but nothing in the gruntfile, the default behavior will use the bower.json of your component to pull the _main and copy it down in the JS folder. If you are using bower for CSS components or something more custom, define that in the bower object. Example below is pulling in the font awesome less files and font:
+
+  require('bsp-grunt')(grunt, {
+        bsp: {
+          bower: {
+            'components-font-awesome':
+            [{
+              src:'less/*',
+              dest:'/assets/styles/font-awesome',
+              expand:true,
+              flatten: true
+            },
+            {
+              src:'fonts/*',
+              dest:'/assets/fonts',
+              expand:true,
+              flatten: true
+            }]
+          },
+        }
+      });
+    };
+
+
+
 ## Grunt
 
 `Gruntfile.js`:

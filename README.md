@@ -41,14 +41,16 @@ Standard set of Grunt configuration for Brightspot projects using the following:
       require('bsp-grunt')(grunt, {
         bsp: {
           styles: {
-            dir: "assets/styles",
-            less: "foo.less"
+            dir: 'assets/styles',
+            less: 'foo.less'
           },
           scripts: {
-            dir: "assets/scripts",
+            dir: 'assets/scripts',
+            // to jshint your js source folder, specify the .jshintrc file based on the root path. If not .jshintrc file is passed, there will be no jshint
+            jshintrc: '.jshintrc',
             rjsModules: [
                 {
-                    name: "foo"
+                    name: 'foo'
                 }
             ]
           }
@@ -67,10 +69,17 @@ Note that `require('bsp-grunt')(grunt, { ... })` replaces `grunt.initConfig({ ..
       grunt.loadNpmTasks('grunt-contrib-uglify');
 
       grunt.registerTask('default', [
+        'bsp-verify'
         'bsp',
         'uglify'
       ])
     };
+
+jshint is setup as a separate 'bsp-verify' task. It gets run by default before the rest of the build, and will stop both Grunt and Maven if there are JS syntax error. If you do not want this behavior, you can respecify the default task to exclude this.
+
+    grunt.registerTask('default', [
+      'bsp',
+    ])
 
 ## Autoprefixer
 

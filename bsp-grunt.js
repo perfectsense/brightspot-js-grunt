@@ -156,8 +156,8 @@ module.exports = function(grunt, config) {
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {
-      var buildName = grunt.option('bsp-maven-build-finalName');
-      var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
+      var buildName = grunt.option('bsp-maven-build-finalName'),
+          buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
 
       if (buildName) {
         grunt.file.write(buildFile, buildName);
@@ -190,10 +190,11 @@ module.exports = function(grunt, config) {
 
   grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
     if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
-      var config = grunt.config('bsp.scripts.rjsConfig');
+      var config = grunt.config('bsp.scripts.rjsConfig'),
+          firstModule;
 
       if (!config) {
-        var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
+        firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
 
         if (firstModule) {
           config = firstModule.name + '.js';
@@ -228,13 +229,13 @@ module.exports = function(grunt, config) {
 
     BOWER.commands.list({ paths: true }).
       on('end', function(pathsByName) {
-        var bowerDirectory = BOWER.config.directory;
-        var bowerFiles = grunt.config('copy.bower.files') || [ ];
+        var bowerDirectory = BOWER.config.directory,
+            bowerFiles = grunt.config('copy.bower.files') || [ ];
 
         _.each(pathsByName, function(paths, name) {
-          var logs = [ ];
-          var cwd = PATH.join(bowerDirectory, name);
-          var files = (grunt.config('bsp.bower') || { })[name];
+          var logs = [ ],
+              cwd = PATH.join(bowerDirectory, name),
+              files = (grunt.config('bsp.bower') || { })[name];
 
           if (files) {
             _.each(_.isArray(files) ? files : [ files ], function(file) {

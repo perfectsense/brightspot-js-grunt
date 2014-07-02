@@ -1,8 +1,8 @@
 module.exports = function(grunt, config) {
-  var BOWER = require('bower');
-  var EXTEND = require('extend');
-  var _ = require('lodash');
-  var PATH = require('path');
+  var BOWER = require('bower'),
+      EXTEND = require('extend'),
+      _ = require('lodash'),
+      PATH = require('path');
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
@@ -20,7 +20,8 @@ module.exports = function(grunt, config) {
         ext: '.min.css',
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
         compiledLessDir: '<%= bsp.maven.targetDir %>/grunt-compiledLess',
-        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
+        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+        autoprefixer: true
       },
 
       scripts: {
@@ -290,6 +291,13 @@ module.exports = function(grunt, config) {
       });
   });
 
+  if (grunt.config('bsp.styles.autoprefixer')) {
+    grunt.registerTask('less-compile', ['less:compile', 'autoprefixer:process', 'browserify:autoprefixer']);
+  }
+  else {
+    grunt.registerTask('less-compile', ['less:compile']);
+  }
+
   grunt.registerTask('bsp', [
     /* configure tasks to figure out correct directories */
     'bsp-config-dest',
@@ -306,10 +314,8 @@ module.exports = function(grunt, config) {
     'copy:styles',
     /* creates compiled JS out of the main require file, gets everything into a .min folder by default */
     'requirejs:dynamic',
-    /* compiles less and creates the autoprefixer rules on the resulting css file */
-    'less:compile',
-    'autoprefixer:process',
-    'browserify:autoprefixer'
+    /* compiles less and creates the autoprefixer rules on the resulting css file if specified in the config */
+    'less-compile'
   ]);
 
   grunt.registerTask('bsp-verify', [

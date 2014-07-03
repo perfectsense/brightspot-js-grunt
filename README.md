@@ -122,6 +122,21 @@ To change the supported list of browsers (see [https://github.com/ai/autoprefixe
         }
       });
 
+
+If you wish to turn off autoprefixer, specify it in your styles definition
+
+    module.exports = function(grunt) {
+      require('bsp-grunt')(grunt, {
+        bsp: {
+          styles: {
+            dir: 'assets/styles',
+            less: 'foo.less',
+            autoprefixer: false
+          }
+        }
+      });
+    };
+
 ## HTML
 
 While developing locally, use the following to compile LESS and apply Autoprefixer on the fly:

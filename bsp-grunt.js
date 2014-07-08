@@ -1,8 +1,8 @@
 module.exports = function(grunt, config) {
-  var BOWER = require('bower');
-  var EXTEND = require('extend');
-  var _ = require('lodash');
-  var PATH = require('path');
+  var BOWER = require('bower'),
+      EXTEND = require('extend'),
+      _ = require('lodash'),
+      PATH = require('path');
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
@@ -20,7 +20,8 @@ module.exports = function(grunt, config) {
         ext: '.min.css',
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
         compiledLessDir: '<%= bsp.maven.targetDir %>/grunt-compiledLess',
-        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
+        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+        autoprefixer: true
       },
 
       scripts: {
@@ -34,7 +35,8 @@ module.exports = function(grunt, config) {
     copy: {
       requirejs: {
         files: {
-          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
+          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js',
+          '<%= bsp.scripts.devDir %>/require-for-optimizer.js': 'node_modules/requirejs/require.js'
         }
       },
 
@@ -56,12 +58,11 @@ module.exports = function(grunt, config) {
       styles: {
         files: [
           {
-            cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
-            dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
+            cwd: '<%= bsp.styles.srcDir %>',
+            dest: '<%= bsp.styles.minDir %>',
             expand: true,
             src: [
-                '**',
-                '!**/*.js'
+                '**'
             ]
           }
         ]
@@ -71,7 +72,7 @@ module.exports = function(grunt, config) {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
               'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
     },
@@ -80,7 +81,7 @@ module.exports = function(grunt, config) {
       compile: {
         files: [
           {
-            cwd: '<%= bsp.styles.srcDir %>',
+            cwd: '<%= bsp.styles.minDir %>',
             dest: '<%= bsp.styles.compiledLessDir %>',
             expand: true,
             ext: '<%= bsp.styles.ext %>',
@@ -157,8 +158,8 @@ module.exports = function(grunt, config) {
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {
-      var buildName = grunt.option('bsp-maven-build-finalName');
-      var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
+      var buildName = grunt.option('bsp-maven-build-finalName'),
+          buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
 
       if (buildName) {
         grunt.file.write(buildFile, buildName);
@@ -191,10 +192,11 @@ module.exports = function(grunt, config) {
 
   grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
     if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
-      var config = grunt.config('bsp.scripts.rjsConfig');
+      var config = grunt.config('bsp.scripts.rjsConfig'),
+          firstModule;
 
       if (!config) {
-        var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
+        firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
 
         if (firstModule) {
           config = firstModule.name + '.js';
@@ -215,7 +217,7 @@ module.exports = function(grunt, config) {
     BOWER.commands.prune().
 
       on('end', function() {
-          grunt.log.writeln("Pruned extraneous Bower packages.");
+          grunt.log.writeln('Pruned extraneous Bower packages.');
           done();
       }).
 
@@ -229,19 +231,19 @@ module.exports = function(grunt, config) {
 
     BOWER.commands.list({ paths: true }).
       on('end', function(pathsByName) {
-        var bowerDirectory = BOWER.config.directory;
-        var bowerFiles = grunt.config('copy.bower.files') || [ ];
+        var bowerDirectory = BOWER.config.directory,
+            bowerFiles = grunt.config('copy.bower.files') || [ ];
 
         _.each(pathsByName, function(paths, name) {
-          var logs = [ ];
-          var cwd = PATH.join(bowerDirectory, name);
-          var files = (grunt.config('bsp.bower') || { })[name];
+          var logs = [ ],
+              cwd = PATH.join(bowerDirectory, name),
+              files = (grunt.config('bsp.bower') || { })[name];
 
           if (files) {
             _.each(_.isArray(files) ? files : [ files ], function(file) {
-              if (_.isPlainObject(file)) {
-                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
 
+              if (_.isPlainObject(file)) {
+                file.dest = '<%= bsp.maven.destDir %>' + (file.dest ? '/' + file.dest : '');
               } else {
                 file = {
                   dest: '<%= bsp.scripts.devDir %>',
@@ -253,7 +255,6 @@ module.exports = function(grunt, config) {
 
               if (file.expand) {
                 file.cwd = cwd + (file.cwd ? '/' + file.cwd : '');
-
               } else {
                 file.src = _.map(_.isArray(file.src) ? file.src : [ file.src ], function(src) {
                     return cwd + (file.cwd ? '/' + file.cwd : '') + '/' + src;
@@ -270,6 +271,7 @@ module.exports = function(grunt, config) {
                 var basename = PATH.basename(path);
 
                 logs.push(basename);
+
                 bowerFiles.push({
                   dest: '<%= bsp.scripts.devDir %>/' + basename,
                   src: path
@@ -278,7 +280,7 @@ module.exports = function(grunt, config) {
             });
           }
 
-          grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
+          grunt.log.writeln('Configured ' + name + ': ' + logs.join(', '));
         });
 
         grunt.config('copy.bower.files', bowerFiles);
@@ -290,21 +292,31 @@ module.exports = function(grunt, config) {
       });
   });
 
+  if (grunt.config('bsp.styles.autoprefixer')) {
+    grunt.registerTask('less-compile', ['less:compile', 'autoprefixer:process', 'browserify:autoprefixer']);
+  }
+  else {
+    grunt.registerTask('less-compile', ['less:compile']);
+  }
+
   grunt.registerTask('bsp', [
+    /* configure tasks to figure out correct directories */
     'bsp-config-dest',
     'bsp-config-requirejs',
-    'less:compile',
-    'autoprefixer:process',
+    /* bower tasks to get packages and setup paths */
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',
+    /* copy everything down into target, where we will do the build work */
     'copy:requirejs',
     'copy:bower',
     'copy:scripts',
-    'requirejs:dynamic',
     'copy:less',
-    'browserify:autoprefixer',
-    'copy:styles'
+    'copy:styles',
+    /* creates compiled JS out of the main require file, gets everything into a .min folder by default */
+    'requirejs:dynamic',
+    /* compiles less and creates the autoprefixer rules on the resulting css file if specified in the config */
+    'less-compile'
   ]);
 
   grunt.registerTask('bsp-verify', [
@@ -315,4 +327,5 @@ module.exports = function(grunt, config) {
   grunt.registerTask('default', [
     'bsp-verify','bsp'
   ]);
+
 };

@@ -46,7 +46,7 @@ Standard set of Grunt configuration for Brightspot projects using the following:
           },
           scripts: {
             dir: 'assets/scripts',
-            // to jshint your js source folder, specify the .jshintrc file based on the root path. If not .jshintrc file is passed, there will be no jshint
+            // to jshint your js source folder, specify the .jshintrc file based on the root path. If no .jshintrc file is passed, there will be no jshint
             jshintrc: '.jshintrc',
             rjsModules: [
                 {
@@ -57,6 +57,21 @@ Standard set of Grunt configuration for Brightspot projects using the following:
         }
       });
     };
+
+
+If you wish to include requirejs into your final compiled scripts file, we copy in a version of require that you can include in the optimizer. You can include it as shown in the example below, and execute your main.js directly vs including your main.js as a data-main of require.js
+
+  scripts: {
+      dir: "assets/js",
+      rjsConfig: 'main.js',
+      rjsModules: [
+          {
+              name: 'main',
+              include: 'require-for-optimizer',
+              insertRequire: ['main']
+          }
+      ]
+  },
 
 Note that `require('bsp-grunt')(grunt, { ... })` replaces `grunt.initConfig({ ... })`. For example, to use  `grunt-contrib-uglify` and provide its configuration:
 

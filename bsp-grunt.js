@@ -34,7 +34,8 @@ module.exports = function(grunt, config) {
     copy: {
       requirejs: {
         files: {
-          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
+          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js',
+          '<%= bsp.scripts.devDir %>/require-for-optimizer.js': 'node_modules/requirejs/require.js'
         }
       },
 

@@ -67,6 +67,19 @@ module.exports = function(grunt, config) {
         ]
       },
 
+      compiledStyles: {
+        files: [
+          {
+            cwd: '<%= bsp.styles.compiledLessDir %>',
+            dest: '<%= bsp.styles.minDir %>',
+            expand: true,
+            src: [
+                '**'
+            ]
+          }
+        ]
+      },
+
       less: {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
@@ -294,7 +307,7 @@ module.exports = function(grunt, config) {
     grunt.registerTask('less-compile', ['less:compile', 'autoprefixer:process', 'browserify:autoprefixer']);
   }
   else {
-    grunt.registerTask('less-compile', ['less:compile']);
+    grunt.registerTask('less-compile', ['less:compile', 'copy:compiledStyles']);
   }
 
   grunt.registerTask('bsp', [

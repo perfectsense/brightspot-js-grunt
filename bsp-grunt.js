@@ -31,6 +31,11 @@ module.exports = function(grunt, config) {
       }
     },
 
+    'bower-install-simple': {
+      all: {
+      }
+    },
+
     copy: {
       requirejs: {
         files: {
@@ -279,7 +284,7 @@ module.exports = function(grunt, config) {
     'less:compile',
     'autoprefixer:process',
     'bower-prune',
-    'bower-install-simple',
+    'bower-install-simple:all',
     'bower-configure-copy',
     'copy:requirejs',
     'copy:bower',

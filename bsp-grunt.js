@@ -20,8 +20,7 @@ module.exports = function(grunt, config) {
         ext: '.min.css',
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.styles.dir %>',
         compiledLessDir: '<%= bsp.maven.targetDir %>/grunt-compiledLess',
-        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
-        autoprefixer: true
+        minDir: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>'
       },
 
       scripts: {
@@ -35,8 +34,7 @@ module.exports = function(grunt, config) {
     copy: {
       requirejs: {
         files: {
-          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js',
-          '<%= bsp.scripts.devDir %>/require-for-optimizer.js': 'node_modules/requirejs/require.js'
+          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
         }
       },
 
@@ -58,24 +56,12 @@ module.exports = function(grunt, config) {
       styles: {
         files: [
           {
-            cwd: '<%= bsp.styles.srcDir %>',
-            dest: '<%= bsp.styles.minDir %>',
+            cwd: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
+            dest: '<%= bsp.maven.destDir %>/<%= bsp.styles.dir %>',
             expand: true,
             src: [
-                '**'
-            ]
-          }
-        ]
-      },
-
-      compiledStyles: {
-        files: [
-          {
-            cwd: '<%= bsp.styles.compiledLessDir %>',
-            dest: '<%= bsp.styles.minDir %>',
-            expand: true,
-            src: [
-                '**'
+                '**',
+                '!**/*.js'
             ]
           }
         ]
@@ -94,7 +80,7 @@ module.exports = function(grunt, config) {
       compile: {
         files: [
           {
-            cwd: '<%= bsp.styles.minDir %>',
+            cwd: '<%= bsp.styles.srcDir %>',
             dest: '<%= bsp.styles.compiledLessDir %>',
             expand: true,
             ext: '<%= bsp.styles.ext %>',
@@ -165,7 +151,6 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-bower-install-simple');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
 
@@ -185,22 +170,6 @@ module.exports = function(grunt, config) {
     }
 
     grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
-  });
-
-  grunt.task.registerTask('bsp-config-jshint', 'Configure jshint.', function() {
-
-    var jshintrc = grunt.config('bsp.scripts.jshintrc');
-
-    if (typeof(jshintrc) !==  'undefined') {
-      grunt.config('jshint.all', ['Gruntfile.js', '<%= bsp.scripts.srcDir %>/**/*.js']);
-      grunt.config('jshint.options.jshintrc', jshintrc);
-
-      grunt.log.writeln('jshint: using ' + grunt.config('jshint.options.jshintrc'));
-    } else {
-      grunt.log.writeln('jshint: no .jshintrc specified, no jshint performed');
-      grunt.config('jshint.all', {});
-    }
-
   });
 
   grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
@@ -254,7 +223,7 @@ module.exports = function(grunt, config) {
           if (files) {
             _.each(_.isArray(files) ? files : [ files ], function(file) {
               if (_.isPlainObject(file)) {
-                file.dest = '<%= bsp.maven.destDir %>' + (file.dest ? '/' + file.dest : '');
+                file.dest = '<%= bsp.scripts.devDir %>' + (file.dest ? '/' + file.dest : '');
 
               } else {
                 file = {
@@ -304,39 +273,24 @@ module.exports = function(grunt, config) {
       });
   });
 
-  if (grunt.config('bsp.styles.autoprefixer')) {
-    grunt.registerTask('less-compile', ['less:compile', 'autoprefixer:process', 'browserify:autoprefixer']);
-  }
-  else {
-    grunt.registerTask('less-compile', ['less:compile', 'copy:compiledStyles']);
-  }
-
   grunt.registerTask('bsp', [
-    /* configure tasks to figure out correct directories */
     'bsp-config-dest',
     'bsp-config-requirejs',
-    /* bower tasks to get packages and setup paths */
+    'less:compile',
+    'autoprefixer:process',
     'bower-prune',
     'bower-install-simple',
     'bower-configure-copy',
-    /* copy everything down into target, where we will do the build work */
     'copy:requirejs',
     'copy:bower',
     'copy:scripts',
-    'copy:less',
-    'copy:styles',
-    /* creates compiled JS out of the main require file, gets everything into a .min folder by default */
     'requirejs:dynamic',
-    /* compiles less and creates the autoprefixer rules on the resulting css file if specified in the config */
-    'less-compile'
-  ]);
-
-  grunt.registerTask('bsp-verify', [
-    'bsp-config-jshint',
-    'jshint'
+    'copy:less',
+    'browserify:autoprefixer',
+    'copy:styles'
   ]);
 
   grunt.registerTask('default', [
-    'bsp-verify','bsp'
+    'bsp'
   ]);
 };

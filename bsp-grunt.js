@@ -68,13 +68,8 @@ module.exports = function(grunt, config) {
                 '**',
                 '!**/*.js'
             ]
-          }
-        ]
-      },
+          },
 
-      /* copies less into the target folder in order to compile less there */
-      less: {
-        files: [
           {
             cwd: '<%= bsp.styles.srcDir %>',
             dest: '<%= bsp.styles.minDir %>',
@@ -84,11 +79,11 @@ module.exports = function(grunt, config) {
         ]
       },
 
-      lessJS: {
+      less: {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
               'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
         }
       }
     },
@@ -296,19 +291,15 @@ module.exports = function(grunt, config) {
     'bower-prune',
     'bower-install-simple:all',
     'bower-configure-copy',
+    'copy:requirejs',
     'copy:bower',
-
-    'copy:less',
+    'copy:styles',
     'less:compile',
     'autoprefixer:process',
-
-    'copy:requirejs',
     'copy:scripts',
     'requirejs:dynamic',
-
-    'copy:lessJS',
-    'browserify:autoprefixer',
-    'copy:styles'
+    'copy:less',
+    'browserify:autoprefixer'
   ]);
 
   grunt.registerTask('default', [

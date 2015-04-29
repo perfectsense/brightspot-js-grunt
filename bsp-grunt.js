@@ -162,6 +162,7 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {

@@ -3,6 +3,8 @@ module.exports = function(grunt, config) {
   var EXTEND = require('extend');
   var _ = require('lodash');
   var PATH = require('path');
+  var Builder = require('systemjs-builder');
+  var builder = new Builder();
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
@@ -37,11 +39,6 @@ module.exports = function(grunt, config) {
     },
 
     copy: {
-      requirejs: {
-        files: {
-          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
-        }
-      },
 
       bower: {
         files: [ ]
@@ -83,7 +80,7 @@ module.exports = function(grunt, config) {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
               'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
     },
@@ -121,15 +118,20 @@ module.exports = function(grunt, config) {
       }
     },
 
-    requirejs: {
-      dynamic: {
-        options: {
-          baseUrl: '<%= bsp.scripts.devDir %>',
-          dir: '<%= bsp.scripts.minDir %>',
-          modules: '<%= bsp.scripts.rjsModules %>',
-          optimize: 'uglify2'
+    systemjs: {
+        dist: {
+            options: {
+                configFile: '<%= bsp.scripts.devDir %>/config.js',
+                configOverrides: {
+                    baseURL: '<%= bsp.scripts.devDir %>'
+                },
+                minify: true,
+                sourceMaps: true
+            },
+            files: [
+                { '<%= bsp.scripts.minDir %>/main.js': '<%= bsp.scripts.devDir %>/main.js' }
+            ]
         }
-      }
     },
 
     browserify: {
@@ -164,7 +166,6 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {
@@ -182,26 +183,6 @@ module.exports = function(grunt, config) {
     }
 
     grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
-  });
-
-  grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
-    if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
-      var config = grunt.config('bsp.scripts.rjsConfig');
-
-      if (!config) {
-        var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
-
-        if (firstModule) {
-          config = firstModule.name + '.js';
-        }
-      }
-
-      if (config) {
-        grunt.config('requirejs.dynamic.options.mainConfigFile', '<%= bsp.scripts.srcDir %>/' + config);
-      }
-    }
-
-    grunt.log.writeln('RequireJS main config: ' + grunt.config('requirejs.dynamic.options.mainConfigFile'));
   });
 
   grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
@@ -285,19 +266,58 @@ module.exports = function(grunt, config) {
       });
   });
 
+  grunt.registerMultiTask('systemjs', 'Compile a systemjs app', function() {
+    var config = {
+      baseURL: '.',
+      map: {
+        babel: 'node_modules/babel-core/browser.min.js'
+      }
+    };
+    var done = this.async();
+    var options = this.options();
+    var filesCount = 0;
+    var filesDone = 0;
+    if (!options.configFile) {
+      grunt.fail.fatal('SystemJS: must specify configFile option');
+    }
+    if (options.configOverrides) {
+      config = _.extend({}, config, options.configOverrides);
+    }
+    this.files.forEach(function() {
+      filesCount++;
+    });
+    this.files.forEach(function(file) {
+      builder.loadConfig(options.configFile)
+        .then(function() {
+          builder.config(config);
+          return builder.buildSFX(file.src[0]);
+        })
+        .then(function(data) {
+          grunt.file.write(file.dest, data.source);
+          grunt.log.writeln('SystemJS: ' + file.dest + ' created');
+          filesDone++;
+          if (filesDone === filesCount) {
+            done();
+          }
+        })
+        .catch(function(err) {
+          grunt.log.writeln('SystemJS: failed to create ' + file.dest);
+          grunt.fail.fatal(err);
+        });
+    });
+  });
+
   grunt.registerTask('bsp', [
     'bsp-config-dest',
-    'bsp-config-requirejs',
     'bower-prune',
     'bower-install-simple:all',
     'bower-configure-copy',
-    'copy:requirejs',
     'copy:bower',
     'copy:styles',
     'less:compile',
     'autoprefixer:process',
     'copy:scripts',
-    'requirejs:dynamic',
+    'systemjs:dist',
     'copy:less',
     'browserify:autoprefixer'
   ]);

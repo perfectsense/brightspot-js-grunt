@@ -55,6 +55,19 @@ module.exports = function(grunt, config) {
         ]
       },
 
+      systemjs: {
+        files: [
+          {
+            src: __dirname + '/node_modules/babel-core/browser.min.js',
+            dest: '<%= bsp.scripts.devDir %>/browser.min.js'
+          },
+          {
+            src: __dirname + '/node_modules/systemjs/dist/system.js',
+            dest: '<%= bsp.scripts.devDir %>/system.js'
+          }
+        ]
+      },
+
       styles: {
         files: [
           {
@@ -317,6 +330,7 @@ module.exports = function(grunt, config) {
     'less:compile',
     'autoprefixer:process',
     'copy:scripts',
+    'copy:systemjs',
     'systemjs:dist',
     'copy:less',
     'browserify:autoprefixer'

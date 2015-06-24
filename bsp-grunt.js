@@ -123,7 +123,7 @@ module.exports = function(grunt, config) {
             options: {
                 configFile: '<%= bsp.scripts.devDir %>/config.js',
                 configOverrides: {
-                    baseURL: '<%= bsp.scripts.devDir %>'
+                    baseURL: '.'
                 },
                 minify: true,
                 sourceMaps: true
@@ -270,7 +270,7 @@ module.exports = function(grunt, config) {
     var config = {
       baseURL: '.',
       map: {
-        babel: 'node_modules/babel-core/browser.min.js'
+        babel: __dirname + '/node_modules/babel-core/browser.min.js'
       }
     };
     var done = this.async();

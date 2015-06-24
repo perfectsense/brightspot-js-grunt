@@ -59,7 +59,7 @@ module.exports = function(grunt, config) {
         files: [
           {
             src: __dirname + '/node_modules/babel-core/browser.min.js',
-            dest: '<%= bsp.scripts.devDir %>/browser.min.js'
+            dest: '<%= bsp.scripts.devDir %>/babel.js'
           },
           {
             src: __dirname + '/node_modules/systemjs/dist/system.js',

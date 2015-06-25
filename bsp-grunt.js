@@ -30,6 +30,11 @@ module.exports = function(grunt, config) {
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
         devDir: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
         minDir: '<%= bsp.scripts.devDir %>.min'
+      },
+
+      systemjs: {
+        minify: true,
+        sourceMaps: true
       }
     },
 
@@ -64,6 +69,10 @@ module.exports = function(grunt, config) {
           {
             src: __dirname + '/node_modules/systemjs/dist/system.js',
             dest: '<%= bsp.scripts.devDir %>/system.js'
+          },
+          {
+            src: __dirname + '/lib/systemjs-builder.js',
+            dest: '<%= bsp.scripts.devDir %>/systemjs-builder.js'
           }
         ]
       },
@@ -129,22 +138,6 @@ module.exports = function(grunt, config) {
           }
         ]
       }
-    },
-
-    systemjs: {
-        dist: {
-            options: {
-                configFile: '<%= bsp.scripts.devDir %>/config.js',
-                configOverrides: {
-                    baseURL: '.'
-                },
-                minify: true,
-                sourceMaps: true
-            },
-            files: [
-                { '<%= bsp.scripts.minDir %>/main.js': '<%= bsp.scripts.devDir %>/main.js' }
-            ]
-        }
     },
 
     browserify: {
@@ -279,44 +272,39 @@ module.exports = function(grunt, config) {
       });
   });
 
-  grunt.registerMultiTask('systemjs', 'Compile a systemjs app', function() {
-    var config = {
-      baseURL: '.',
-      map: {
-        babel: __dirname + '/node_modules/babel-core/browser.min.js'
-      }
-    };
+  grunt.registerTask('systemjs-main', 'Compile the main systemjs app', function() {
     var done = this.async();
-    var options = this.options();
-    var filesCount = 0;
-    var filesDone = 0;
-    if (!options.configFile) {
-      grunt.fail.fatal('SystemJS: must specify configFile option');
-    }
-    if (options.configOverrides) {
-      config = _.extend({}, config, options.configOverrides);
-    }
-    this.files.forEach(function() {
-      filesCount++;
-    });
-    this.files.forEach(function(file) {
-      builder.loadConfig(options.configFile)
-        .then(function() {
-          builder.config(config);
-          return builder.buildSFX(file.src[0]);
-        })
-        .then(function(data) {
-          grunt.file.write(file.dest, data.source);
-          grunt.log.writeln('SystemJS: ' + file.dest + ' created');
-          filesDone++;
-          if (filesDone === filesCount) {
-            done();
-          }
-        })
-        .catch(function(err) {
-          grunt.log.writeln('SystemJS: failed to create ' + file.dest);
-          grunt.fail.fatal(err);
-        });
+    var outPathRelative = grunt.config('bsp.scripts.minDir') + '/main.js';
+    var outPath = PATH.resolve(outPathRelative);
+    var child = grunt.util.spawn({
+      cmd: 'node',
+      args: [
+        'systemjs-builder.js',
+        'main.js',
+        PATH.resolve( grunt.config('bsp.scripts.minDir') ) + '/main.js',
+        'config.js',
+        grunt.config('bsp.systemjs.minify'),
+        grunt.config('bsp.systemjs.sourceMaps')
+      ],
+      opts: {
+        cwd: grunt.config('bsp.scripts.devDir')
+      }
+    }, function(err) {
+      if (err) {
+        grunt.log.writeln('System JS main build failed');
+        grunt.fail.fatal(err);
+      }
+      if (!grunt.file.exists(outPath)) {
+        grunt.fail.fatal('System JS main build failed to create ' + outPathRelative);
+      }
+      if (grunt.config('bsp.systemjs.sourceMaps')) {
+        if ( grunt.file.exists(outPath + '.map') ) {
+          grunt.log.writeln('File', (outPathRelative+'.map').cyan, 'created');
+        } else {
+          grunt.fail.fatal('System JS main build failed to create ', outPathRelative+'.map' );
+        }
+      }
+      grunt.log.writeln('File', outPathRelative.cyan, 'created');
     });
   });
 
@@ -331,7 +319,7 @@ module.exports = function(grunt, config) {
     'autoprefixer:process',
     'copy:scripts',
     'copy:systemjs',
-    'systemjs:dist',
+    'systemjs-main',
     'copy:less',
     'browserify:autoprefixer'
   ]);

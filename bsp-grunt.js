@@ -71,8 +71,8 @@ module.exports = function(grunt, config) {
             dest: '<%= bsp.scripts.devDir %>/system.js'
           },
           {
-            src: __dirname + '/lib/systemjs-builder.js',
-            dest: '<%= bsp.scripts.devDir %>/systemjs-builder.js'
+            src: __dirname + '/lib/systemjs-build.js',
+            dest: '<%= bsp.scripts.devDir %>/systemjs-build.js'
           }
         ]
       },
@@ -279,7 +279,7 @@ module.exports = function(grunt, config) {
     var child = grunt.util.spawn({
       cmd: 'node',
       args: [
-        'systemjs-builder.js',
+        'systemjs-build.js',
         'main.js',
         PATH.resolve( grunt.config('bsp.scripts.minDir') ) + '/main.js',
         'config.js',

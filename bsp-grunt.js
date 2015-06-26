@@ -32,10 +32,7 @@ module.exports = function(grunt, config) {
         minDir: '<%= bsp.scripts.devDir %>.min'
       },
 
-      systemjs: {
-        minify: true,
-        sourceMaps: true
-      }
+      systemjs: {}
     },
 
     'bower-install-simple': {
@@ -56,23 +53,6 @@ module.exports = function(grunt, config) {
             dest: '<%= bsp.scripts.devDir %>',
             expand: true,
             src: '**'
-          }
-        ]
-      },
-
-      systemjs: {
-        files: [
-          {
-            src: __dirname + '/node_modules/babel-core/browser.min.js',
-            dest: '<%= bsp.scripts.devDir %>/babel.js'
-          },
-          {
-            src: __dirname + '/node_modules/systemjs/dist/system.js',
-            dest: '<%= bsp.scripts.devDir %>/system.js'
-          },
-          {
-            src: __dirname + '/lib/systemjs-build.js',
-            dest: '<%= bsp.scripts.devDir %>/systemjs-build.js'
           }
         ]
       },
@@ -164,7 +144,20 @@ module.exports = function(grunt, config) {
           }
         }
       }
+    },
+
+    systemjs: {
+      dist: {
+        options: {
+          configFile: '<%= bsp.scripts.devDir %>/config.js',
+          configOverrides: grunt.config('bsp.systemjs')
+        },
+        files: [
+          { '<%= bsp.scripts.minDir %>/main.min.js': '<%= bsp.scripts.devDir %>/main.js' }
+        ]
+      }
     }
+
   }, (config || { })));
 
   grunt.loadNpmTasks('grunt-autoprefixer');
@@ -172,6 +165,7 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadTasks(__dirname + '/tasks');
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {
@@ -272,43 +266,6 @@ module.exports = function(grunt, config) {
       });
   });
 
-  /** @todo convert this to use generic task in tasks folder */
-  grunt.registerTask('systemjs-main', 'Compile the main systemjs app', function() {
-    var done = this.async();
-    var outPathRelative = grunt.config('bsp.scripts.minDir') + '/main.js';
-    var outPath = PATH.resolve(outPathRelative);
-    var child = grunt.util.spawn({
-      cmd: 'node',
-      args: [
-        'systemjs-build.js',
-        'main.js',
-        PATH.resolve( grunt.config('bsp.scripts.minDir') ) + '/main.js',
-        'config.js',
-        grunt.config('bsp.systemjs.minify'),
-        grunt.config('bsp.systemjs.sourceMaps')
-      ],
-      opts: {
-        cwd: grunt.config('bsp.scripts.devDir')
-      }
-    }, function(err) {
-      if (err) {
-        grunt.log.writeln('System JS main build failed');
-        grunt.fail.fatal(err);
-      }
-      if (!grunt.file.exists(outPath)) {
-        grunt.fail.fatal('System JS main build failed to create ' + outPathRelative);
-      }
-      if (grunt.config('bsp.systemjs.sourceMaps')) {
-        if ( grunt.file.exists(outPath + '.map') ) {
-          grunt.log.writeln('File', (outPathRelative+'.map').cyan, 'created');
-        } else {
-          grunt.fail.fatal('System JS main build failed to create ', outPathRelative+'.map' );
-        }
-      }
-      grunt.log.writeln('File', outPathRelative.cyan, 'created');
-    });
-  });
-
   grunt.registerTask('bsp', [
     'bsp-config-dest',
     'bower-prune',
@@ -319,8 +276,7 @@ module.exports = function(grunt, config) {
     'less:compile',
     'autoprefixer:process',
     'copy:scripts',
-    'copy:systemjs',
-    'systemjs-main',
+    'systemjs',
     'copy:less',
     'browserify:autoprefixer'
   ]);

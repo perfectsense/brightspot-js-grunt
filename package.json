@@ -23,7 +23,8 @@
     "grunt-browserify": "~2.1.0",
     "grunt-cli": "~0.1.13",
     "grunt-contrib-copy": "^0.8.0",
-    "grunt-contrib-less": "^1.0.0"
+    "grunt-contrib-less": "^1.0.0",
+    "systemjs-builder": "^0.12.1"
   },
   "repository": {
     "type": "git",

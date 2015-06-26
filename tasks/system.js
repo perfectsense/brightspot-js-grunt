@@ -3,6 +3,7 @@ var path = require('path');
 
 module.exports = function(grunt) {
 	grunt.registerMultiTask('systemjs', 'Compiles systemjs apps', function() {
+		var bspGruntDir = path.resolve(__dirname, '..');
 		var config = {
 			minify: true,
 			sourceMaps: true
@@ -12,9 +13,9 @@ module.exports = function(grunt) {
 		var done = this.async();
 		var options = this.options();
 		var buildDeps = [
-			{ src: 'node_modules/babel-core/browser.js', dest: 'babel.js' },
-			{ src: 'node_modules/bsp-grunt/lib/systemjs-build.js', dest: 'systemjs-build.js' },
-			{ src: 'node_modules/systemjs/dist/system.js', dest: 'system.js' }
+			{ src: bspGruntDir + '/node_modules/babel-core/browser.js', dest: 'babel.js' },
+			{ src: bspGruntDir + '/lib/systemjs-build.js', dest: 'systemjs-build.js' },
+			{ src: bspGruntDir + '/node_modules/systemjs/dist/system.js', dest: 'system.js' }
 		];
 		if (!options.configFile || !grunt.file.exists(options.configFile)) {
 			grunt.fail.fatal('SystemJS tasks needs a vaild configFile option');

@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var path = require('path');
 
 module.exports = function(grunt) {
 	grunt.registerMultiTask('systemjs', 'Compiles systemjs apps', function() {

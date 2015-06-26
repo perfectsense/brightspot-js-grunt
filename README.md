@@ -8,8 +8,7 @@ Standard set of Grunt configuration for Brightspot projects using the following:
 - [Brightspot](http://www.brightspotcms.com/)
 - [Grunt](http://gruntjs.com/)
 - [LESS](http://lesscss.org/)
-- [RequireJS](http://requirejs.org/)
-  - [r.js](http://requirejs.org/docs/optimization.html)
+- [SystemJS Builder](https://github.com/systemjs/builder)
 
 # Usage
 

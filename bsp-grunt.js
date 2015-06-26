@@ -272,6 +272,7 @@ module.exports = function(grunt, config) {
       });
   });
 
+  /** @todo convert this to use generic task in tasks folder */
   grunt.registerTask('systemjs-main', 'Compile the main systemjs app', function() {
     var done = this.async();
     var outPathRelative = grunt.config('bsp.scripts.minDir') + '/main.js';

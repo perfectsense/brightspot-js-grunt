@@ -29,5 +29,6 @@
     "type": "git",
     "url": "git://github.com/perfectsense/brightspot-js-grunt"
   },
+  "files": ["tasks"],
   "version": "2.0.0"
 }

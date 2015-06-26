@@ -28,22 +28,21 @@ module.exports = function(grunt) {
 		this.files.forEach(function(file) {
 			var args = [
 				'systemjs-build.js',
-				path.basename(file.src[0]),
-				path.resolve(file.dest),
-				path.basename(options.configFile),
-				config.minify,
-				config.sourceMaps
+				'--input=' + path.basename(file.src[0]),
+				'--output=' + path.resolve(file.dest),
+				'--config=' + path.basename(options.configFile)
 			];
 			var child;
 			var fileBaseDir = path.resolve( path.dirname(file.src[0]) );
-			var troubleShootCmd = '';
 			
 			/** script must be run from app root because of bug in systemjs-builder */
 			buildDeps.forEach(function(dep) {
 				grunt.file.copy(dep.src, fileBaseDir + '/' + dep.dest);
 			});
 
-			troubleShootCmd = 'node ' + args.join(' ');
+			_.forEach(config, function(val, key) {
+				args.push('--' + key + '=' + val);
+			});
 
 			child = grunt.util.spawn({
 				cmd: 'node',

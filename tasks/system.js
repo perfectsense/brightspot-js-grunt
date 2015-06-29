@@ -13,9 +13,9 @@ module.exports = function(grunt) {
 		var done = this.async();
 		var options = this.options();
 		var buildDeps = [
-			{ src: bspGruntDir + '/node_modules/babel-core/browser.js', dest: 'babel.js' },
+			{ src: bspGruntDir + '/lib/browser.js', dest: 'babel.js' },
 			{ src: bspGruntDir + '/lib/systemjs-build.js', dest: 'systemjs-build.js' },
-			{ src: bspGruntDir + '/node_modules/systemjs/dist/system.js', dest: 'system.js' }
+			{ src: bspGruntDir + '/lib/system.js', dest: 'system.js' }
 		];
 		if (!options.configFile || !grunt.file.exists(options.configFile)) {
 			grunt.fail.fatal('SystemJS tasks needs a vaild configFile option');

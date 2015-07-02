@@ -78,6 +78,28 @@ module.exports = function(grunt, config) {
         ]
       },
 
+      compiledCSS: {
+        files: [
+          {
+            cwd: '<%= bsp.styles.compiledLessDir %>',
+            dest: '<%= bsp.styles.minDir %>',
+            expand: true,
+            src: '**/*<%= bsp.styles.ext %>'
+          }
+        ]
+      },
+
+      compiledCSSForWatcher: {
+        files: [
+          {
+            cwd: '<%= bsp.styles.compiledLessDir %>',
+            dest: '<%= bsp.styles.srcDir %>',
+            expand: true,
+            src: '**/*<%= bsp.styles.ext %>'
+          }
+        ]
+      },
+
       less: {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
@@ -85,6 +107,12 @@ module.exports = function(grunt, config) {
               grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
+    },
+
+    clean: {
+      sourceCSS: [
+        '<%= bsp.styles.srcDir %>' + '**/*<%= bsp.styles.ext %>'
+      ]
     },
 
     less: {
@@ -107,42 +135,10 @@ module.exports = function(grunt, config) {
       }
     },
 
-    autoprefixer: {
-      process: {
-        files: [
-          {
-            cwd: '<%= bsp.styles.compiledLessDir %>',
-            dest: '<%= bsp.styles.minDir %>',
-            expand: true,
-            src: '**/*<%= bsp.styles.ext %>'
-          }
-        ]
-      }
-    },
-
-    browserify: {
-      autoprefixer: {
-        files: [
-          {
-            dest: '<%= bsp.scripts.devDir %>/less-dev.js',
-            src: 'node_modules/grunt-autoprefixer/node_modules/autoprefixer/lib/autoprefixer.js'
-          }
-        ],
-
-        options: {
-          bundleOptions: {
-            standalone: 'autoprefixer'
-          },
-
-          postBundleCB: function(err, src, next) {
-            src += 'window.less = window.less || { };';
-            src += 'window.less.env = "development";';
-            src += 'window.less.postProcessor = function(css) { return autoprefixer(';
-            src += _.map(grunt.config('autoprefixer.process.options.browsers') || [ ], function(browser) { return '"' + browser + '"'; }).join(', ');
-            src += ').process(css).css; };';
-            next(err, src);
-          }
-        }
+    watch: {
+      less: {
+        files: '<%= bsp.styles.srcDir %>' + '/**/*.less',
+        tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'copy:compiledCSSForWatcher']
       }
     },
 
@@ -160,12 +156,12 @@ module.exports = function(grunt, config) {
 
   }, (config || { })));
 
-  grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-bower-install-simple');
-  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadTasks(__dirname + '/tasks');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
     if (!grunt.config('bsp.maven.destDir')) {
@@ -267,21 +263,22 @@ module.exports = function(grunt, config) {
   });
 
   grunt.registerTask('bsp', [
-    'bsp-config-dest',
+    'bsp-config-dest', // configure the destination that maven creates
+    'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
     'bower-prune',
     'bower-install-simple:all',
     'bower-configure-copy',
     'copy:bower',
     'copy:styles',
     'less:compile',
-    'autoprefixer:process',
     'copy:scripts',
     'systemjs',
-    'copy:less',
-    'browserify:autoprefixer'
+    'copy:less', // this copies less.js to allow for client side compilation
+    'copy:compiledCSS' // copies the compiled CSS to the target dir, this was the task performed by the autoprefixed before we removed it
   ]);
 
   grunt.registerTask('default', [
     'bsp'
   ]);
+
 };

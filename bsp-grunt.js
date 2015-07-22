@@ -8,6 +8,13 @@ module.exports = function(grunt, config) {
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
+      brightspotBase: {
+        srcDir: 'bower_components/brightspot-base/src/main/webapp',
+        assetsDir: '<%= bsp.brightspotBase.srcDir %>/assets',
+        templatesDir: '<%= bsp.brightspotBase.srcDir %>/render',
+        enable: false
+      },
+
       maven: {
         srcDir: 'src/main/webapp',
         targetDir: 'target'
@@ -49,6 +56,23 @@ module.exports = function(grunt, config) {
 
       bower: {
         files: [ ]
+      },
+
+      brightspotBase: {
+        files: [
+          {
+            cwd: '<%= bsp.brightspotBase.assetsDir %>',
+            dest: '<%= bsp.maven.destDir %>/assets',
+            expand: true,
+            src: '**/*'
+          },
+          {
+            cwd: '<%= bsp.brightspotBase.templatesDir %>',
+            dest: '<%= bsp.maven.destDir %>/render',
+            expand: true,
+            src: '**/*'
+          }
+        ]
       },
 
       scripts: {
@@ -156,6 +180,12 @@ module.exports = function(grunt, config) {
         files: [
           { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }
         ]
+      }
+    },
+
+    'brightspot-base-copy': {
+      options: {
+        enable: '<%= bsp.brightspotBase.enable %>'
       }
     }
 
@@ -267,12 +297,21 @@ module.exports = function(grunt, config) {
       });
   });
 
+  grunt.task.registerTask('brightspot-base-copy', 'Copies brightspot base files to build directory', function() {
+    if (this.options().enable) {
+      grunt.task.run(['copy:brightspotBase']);
+    } else {
+      grunt.log.writeln('brightspot-base-copy disabled, skipping');
+    }
+  });
+
   grunt.registerTask('bsp', [
     'bsp-config-dest', // configure the destination that maven creates
     'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
     'bower-prune',
     'bower-install-simple:all',
     'bower-configure-copy',
+    'brightspot-base-copy',
     'copy:bower',
     'copy:styles',
     'less:compile',

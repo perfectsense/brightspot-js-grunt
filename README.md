@@ -1,13 +1,14 @@
 # Introduction
 
+NOTE: Starting with version 2.0.0, bsp-grunt compiles [ECMAScript 6 modules](http://www.2ality.com/2014/09/es6-modules-final.html) instead of a [RequireJS modules](http://requirejs.org/). Work in 1.x.x if you need RequireJS.
+
 Standard set of Grunt configuration for Brightspot projects using the following:
 
 - [Autoprefixer](https://github.com/ai/autoprefixer)
 - [Brightspot](http://www.brightspotcms.com/)
 - [Grunt](http://gruntjs.com/)
 - [LESS](http://lesscss.org/)
-- [RequireJS](http://requirejs.org/)
-  - [r.js](http://requirejs.org/docs/optimization.html)
+- [SystemJS Builder](https://github.com/systemjs/builder)
 
 # Usage
 

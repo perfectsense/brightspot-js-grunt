@@ -3,6 +3,8 @@ module.exports = function(grunt, config) {
   var EXTEND = require('extend');
   var _ = require('lodash');
   var PATH = require('path');
+  var Builder = require('systemjs-builder');
+  var builder = new Builder();
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
@@ -28,6 +30,13 @@ module.exports = function(grunt, config) {
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
         devDir: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
         minDir: '<%= bsp.scripts.devDir %>.min'
+      },
+
+      systemjs: {
+        configOverrides: {},
+        srcFile: '<%= bsp.scripts.devDir %>/main.js',
+        destFile: '<%= bsp.scripts.minDir %>/main.min.js',
+        configFile: '<%= bsp.scripts.devDir %>/config.js'
       }
     },
 
@@ -37,11 +46,6 @@ module.exports = function(grunt, config) {
     },
 
     copy: {
-      requirejs: {
-        files: {
-          '<%= bsp.scripts.devDir %>/require.js': 'node_modules/requirejs/require.js'
-        }
-      },
 
       bower: {
         files: [ ]
@@ -105,7 +109,7 @@ module.exports = function(grunt, config) {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
               'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json')['main']
+              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
     },
@@ -136,22 +140,22 @@ module.exports = function(grunt, config) {
       }
     },
 
-    requirejs: {
-      dynamic: {
-        options: {
-          baseUrl: '<%= bsp.scripts.devDir %>',
-          dir: '<%= bsp.scripts.minDir %>',
-          modules: '<%= bsp.scripts.rjsModules %>',
-          optimize: 'uglify2'
-        }
-      }
-    },
-
-
     watch: {
       less: {
         files: '<%= bsp.styles.srcDir %>' + '/**/*.less',
         tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'copy:compiledCSSForWatcher']
+      }
+    },
+
+    systemjs: {
+      dist: {
+        options: {
+          configFile: '<%= bsp.systemjs.configFile %>',
+          configOverrides: grunt.config('bsp.systemjs.configOverrides')
+        },
+        files: [
+          { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }
+        ]
       }
     }
 
@@ -161,7 +165,7 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-less');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadTasks(__dirname + '/tasks');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
@@ -180,26 +184,6 @@ module.exports = function(grunt, config) {
     }
 
     grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
-  });
-
-  grunt.task.registerTask('bsp-config-requirejs', 'Configure RequireJS.', function() {
-    if (!grunt.config('requirejs.dynamic.options.mainConfigFile')) {
-      var config = grunt.config('bsp.scripts.rjsConfig');
-
-      if (!config) {
-        var firstModule = (grunt.config('requirejs.dynamic.options.modules') || [ ])[0];
-
-        if (firstModule) {
-          config = firstModule.name + '.js';
-        }
-      }
-
-      if (config) {
-        grunt.config('requirejs.dynamic.options.mainConfigFile', '<%= bsp.scripts.srcDir %>/' + config);
-      }
-    }
-
-    grunt.log.writeln('RequireJS main config: ' + grunt.config('requirejs.dynamic.options.mainConfigFile'));
   });
 
   grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
@@ -286,16 +270,14 @@ module.exports = function(grunt, config) {
   grunt.registerTask('bsp', [
     'bsp-config-dest', // configure the destination that maven creates
     'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
-    'bsp-config-requirejs',
     'bower-prune',
     'bower-install-simple:all',
     'bower-configure-copy',
-    'copy:requirejs',
     'copy:bower',
     'copy:styles',
     'less:compile',
     'copy:scripts',
-    'requirejs:dynamic',
+    'systemjs',
     'copy:less', // this copies less.js to allow for client side compilation
     'copy:compiledCSS' // copies the compiled CSS to the target dir, this was the task performed by the autoprefixed before we removed it
   ]);

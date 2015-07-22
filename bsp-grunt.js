@@ -32,7 +32,12 @@ module.exports = function(grunt, config) {
         minDir: '<%= bsp.scripts.devDir %>.min'
       },
 
-      systemjs: {}
+      systemjs: {
+        configOverrides: {},
+        srcFile: '<%= bsp.scripts.devDir %>/main.js',
+        destFile: '<%= bsp.scripts.minDir %>/main.min.js',
+        configFile: '<%= bsp.scripts.devDir %>/config.js'
+      }
     },
 
     'bower-install-simple': {
@@ -145,11 +150,11 @@ module.exports = function(grunt, config) {
     systemjs: {
       dist: {
         options: {
-          configFile: '<%= bsp.scripts.devDir %>/config.js',
-          configOverrides: grunt.config('bsp.systemjs')
+          configFile: '<%= bsp.systemjs.configFile %>',
+          configOverrides: grunt.config('bsp.systemjs.configOverrides')
         },
         files: [
-          { '<%= bsp.scripts.minDir %>/main.min.js': '<%= bsp.scripts.devDir %>/main.js' }
+          { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }
         ]
       }
     }

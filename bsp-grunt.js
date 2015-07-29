@@ -386,8 +386,8 @@ module.exports = function(grunt, config) {
     'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
     'bower-prune',
     'bower-install-simple:all',
-    'bower-configure-copy',
     'brightspot-base',
+    'bower-configure-copy',
     'copy:bower',
     'copy:styles',
     'less:compile',

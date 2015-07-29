@@ -309,64 +309,72 @@ module.exports = function(grunt, config) {
       // on the other hand, if you're not using bootstrap, it means you are rewriting a LOT of CSS, so you
       // should instead just fork brightspot-base rather than trying to use this boilerplate
 
-      grunt.config.set('bsp.bower.bootstrap', [
-          {
-              cwd: 'less/',
-              src: '**/*',
-              dest: 'bower/bootstrap',
-              expand: true,
-              flatten: false
-          },
-          {
-              cwd: 'js/',
-              src: '**/*',
-              dest: 'bower/bootstrap',
-              expand: true,
-              flatten: false
-          }
-      ]);
+      if(!grunt.config.get('bsp.bower.bootstrap')) {
 
-      grunt.config.set('bsp.bower.fontawesome', [
-          {
-              src: 'less/*',
-              dest: '../styles/bower/fontawesome',
-              expand: true,
-              flatten: true
-          },
-          {
-              src: 'fonts/*',
-              dest: '../fonts',
-              expand: true,
-              flatten: true
-          }
-      ]);
+        grunt.config.set('bsp.bower.bootstrap', [
+            {
+                cwd: 'less/',
+                src: '**/*',
+                dest: 'bower/bootstrap',
+                expand: true,
+                flatten: false
+            },
+            {
+                cwd: 'js/',
+                src: '**/*',
+                dest: 'bower/bootstrap',
+                expand: true,
+                flatten: false
+            }
+        ]);
 
-      grunt.config.set('bsp.bower.bsp-carousel', [
-          {
-              cwd: 'dist/bsp-carousel/',
-              src: 'bsp-carousel.css',
-              dest: '../styles/bower/bsp-carousel',
-              expand: true
-          },
-          {
-              cwd: 'dist/bsp-carousel/',
-              src: '*.js',
-              dest: '', //root of scripts
-              expand: true
-          },
-          {
-              cwd: 'dist/bsp-carousel-thumbnav/',
-              src: '*.js',
-              dest: '', //root of scripts
-              expand: true
-          },
-          {
-              cwd: 'src/less/bsp-carousel-gallery/',
-              src: '*.less',
-              dest: '../styles/bower/bsp-carousel-gallery',
-              expand: true
-          }
-      ]);
+      }
+      
+      if(!grunt.config.get('bsp.bower.fontawesome')) {
+        grunt.config.set('bsp.bower.fontawesome', [
+            {
+                src: 'less/*',
+                dest: '../styles/bower/fontawesome',
+                expand: true,
+                flatten: true
+            },
+            {
+                src: 'fonts/*',
+                dest: '../fonts',
+                expand: true,
+                flatten: true
+            }
+        ]);
+      }
+
+      if(!grunt.config.get('bsp.bower.bsp-carousel')) {
+        grunt.config.set('bsp.bower.bsp-carousel', [
+            {
+                cwd: 'dist/bsp-carousel/',
+                src: 'bsp-carousel.css',
+                dest: '../styles/bower/bsp-carousel',
+                expand: true
+            },
+            {
+                cwd: 'dist/bsp-carousel/',
+                src: '*.js',
+                dest: '', //root of scripts
+                expand: true
+            },
+            {
+                cwd: 'dist/bsp-carousel-thumbnav/',
+                src: '*.js',
+                dest: '', //root of scripts
+                expand: true
+            },
+            {
+                cwd: 'src/less/bsp-carousel-gallery/',
+                src: '*.less',
+                dest: '../styles/bower/bsp-carousel-gallery',
+                expand: true
+            }
+        ]);
+      }
 
     } else {
       grunt.log.writeln('brightspot-base disabled, skipping');

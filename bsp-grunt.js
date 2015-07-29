@@ -183,7 +183,7 @@ module.exports = function(grunt, config) {
       }
     },
 
-    'brightspot-base-copy': {
+    'brightspot-base': {
       options: {
         enable: '<%= bsp.brightspotBase.enable %>'
       }
@@ -297,11 +297,87 @@ module.exports = function(grunt, config) {
       });
   });
 
-  grunt.task.registerTask('brightspot-base-copy', 'Copies brightspot base files to build directory', function() {
+  grunt.task.registerTask('brightspot-base', 'Copies brightspot base files to build directory', function() {
     if (this.options().enable) {
       grunt.task.run(['copy:brightspotBase']);
+
+      // here we setup so bower copy tasks so that the gruntfile for a brightspot base project can be clean
+      // these get copied into the target, and base uses them, so we include them in here every time
+      // if someone chooses to not use font awesome or bsp-carousel, it's ok, as they will only live in the
+      // target folder and not be used rather than junking up the project repo
+      // 
+      // on the other hand, if you're not using bootstrap, it means you are rewriting a LOT of CSS, so you
+      // should instead just fork brightspot-base rather than trying to use this boilerplate
+
+      if(!grunt.config.get('bsp.bower.bootstrap')) {
+
+        grunt.config.set('bsp.bower.bootstrap', [
+            {
+                cwd: 'less/',
+                src: '**/*',
+                dest: 'bower/bootstrap',
+                expand: true,
+                flatten: false
+            },
+            {
+                cwd: 'js/',
+                src: '**/*',
+                dest: 'bower/bootstrap',
+                expand: true,
+                flatten: false
+            }
+        ]);
+
+      }
+      
+      if(!grunt.config.get('bsp.bower.fontawesome')) {
+        grunt.config.set('bsp.bower.fontawesome', [
+            {
+                src: 'less/*',
+                dest: '../styles/bower/fontawesome',
+                expand: true,
+                flatten: true
+            },
+            {
+                src: 'fonts/*',
+                dest: '../fonts',
+                expand: true,
+                flatten: true
+            }
+        ]);
+      }
+
+      if(!grunt.config.get('bsp.bower.bsp-carousel')) {
+        grunt.config.set('bsp.bower.bsp-carousel', [
+            {
+                cwd: 'dist/bsp-carousel/',
+                src: 'bsp-carousel.css',
+                dest: '../styles/bower/bsp-carousel',
+                expand: true
+            },
+            {
+                cwd: 'dist/bsp-carousel/',
+                src: '*.js',
+                dest: '', //root of scripts
+                expand: true
+            },
+            {
+                cwd: 'dist/bsp-carousel-thumbnav/',
+                src: '*.js',
+                dest: '', //root of scripts
+                expand: true
+            },
+            {
+                cwd: 'src/less/bsp-carousel-gallery/',
+                src: '*.less',
+                dest: '../styles/bower/bsp-carousel-gallery',
+                expand: true
+            }
+        ]);
+      }
+
     } else {
-      grunt.log.writeln('brightspot-base-copy disabled, skipping');
+      grunt.log.writeln('brightspot-base disabled, skipping');
     }
   });
 
@@ -310,9 +386,9 @@ module.exports = function(grunt, config) {
     'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
     'bower-prune',
     'bower-install-simple:all',
+    'brightspot-base',
     'bower-configure-copy',
     'copy:bower',
-    'brightspot-base-copy',
     'copy:styles',
     'less:compile',
     'copy:scripts',

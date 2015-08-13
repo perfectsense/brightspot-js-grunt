@@ -129,6 +129,23 @@ module.exports = function(grunt, config) {
         ]
       },
 
+      compiledJSForWatcher: {
+        files: [
+          {
+            cwd: '<%= bsp.scripts.minDir %>',
+            dest: '<%= bsp.scripts.srcDir %>',
+            expand: true,
+            src: '**/*.min.js'
+          },
+          {
+            cwd: '<%= bsp.scripts.minDir %>',
+            dest: '<%= bsp.scripts.srcDir %>',
+            expand: true,
+            src: '**/*.min.js.map'
+          }
+        ]
+      },
+
       less: {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
@@ -141,6 +158,10 @@ module.exports = function(grunt, config) {
     clean: {
       sourceCSS: [
         '<%= bsp.styles.srcDir %>' + '**/*<%= bsp.styles.ext %>'
+      ],
+      sourceJS: [
+        '<%= bsp.scripts.srcDir %>' + '**/*.min.js',
+        '<%= bsp.scripts.srcDir %>' + '**/*.min.js.map'
       ]
     },
 
@@ -165,9 +186,19 @@ module.exports = function(grunt, config) {
     },
 
     watch: {
+
       less: {
-        files: '<%= bsp.styles.srcDir %>' + '/**/*.less',
+        files: ['<%= bsp.styles.srcDir %>' + '/**/*.less'],
         tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'copy:compiledCSSForWatcher']
+      },
+
+      js: {
+        files: [
+          '<%= bsp.scripts.srcDir %>' + '/**/*.js',
+          '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js', 
+          '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js.map'
+        ],
+        tasks: ['bsp-config-dest', 'copy:scripts', 'systemjs', 'copy:compiledJSForWatcher']
       }
     },
 

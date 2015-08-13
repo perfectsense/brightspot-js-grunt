@@ -36,7 +36,7 @@ module.exports = function(grunt, config) {
         dir: '',
         srcDir: '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
         devDir: '<%= bsp.maven.destDir %>/<%= bsp.scripts.dir %>',
-        minDir: '<%= bsp.scripts.devDir %>.min'
+        minDir: '<%= bsp.scripts.devDir %>'
       },
 
       systemjs: {

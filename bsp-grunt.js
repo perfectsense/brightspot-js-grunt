@@ -16,6 +16,7 @@ module.exports = function(grunt, config) {
       },
 
       maven: {
+        pom: process.cwd() + '/pom.xml',
         srcDir: 'src/main/webapp',
         targetDir: 'target'
       },
@@ -228,24 +229,6 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadTasks(__dirname + '/tasks');
   grunt.loadNpmTasks('grunt-contrib-watch');
-
-  grunt.task.registerTask('bsp-config-dest', 'Configure build destination.', function() {
-    if (!grunt.config('bsp.maven.destDir')) {
-      var buildName = grunt.option('bsp-maven-build-finalName');
-      var buildFile = grunt.config('bsp.maven.targetDir') + '/grunt-dest';
-
-      if (buildName) {
-        grunt.file.write(buildFile, buildName);
-
-      } else {
-        buildName = grunt.file.read(buildFile);
-      }
-
-      grunt.config('bsp.maven.destDir', '<%= bsp.maven.targetDir %>/' + buildName);
-    }
-
-    grunt.log.writeln('Build destination: ' + grunt.config('bsp.maven.destDir'));
-  });
 
   grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
     var done = this.async();

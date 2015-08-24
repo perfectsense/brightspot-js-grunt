@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 				xml = parser.toJson( fs.readFileSync(pom), { object: true } );
 				buildName = xml.project.artifactId + '-' + xml.project.version;
 				grunt.config('bsp.maven.destDir', '<%= bsp.maven.targetDir %>/' + buildName);
-				console.log( grunt.config('bsp.maven.destDir') );
+				grunt.log.writeln( grunt.config('bsp.maven.destDir') );
 			} else {
 				grunt.fail.fatal(pom + ' not found, is required to configure the target directory');
 			}

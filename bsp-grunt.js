@@ -108,18 +108,6 @@ module.exports = function(grunt, config) {
         ]
       },
 
-      postcss: {
-          options: {
-              map: true,
-              processors: [
-                  require('autoprefixer')()
-              ]
-          },
-          autoprefixer: {
-              src: '<%= bsp.styles.compiledLessDir %>/**/*'
-          }
-      },
-
       compiledCSS: {
         files: [
           {
@@ -197,6 +185,18 @@ module.exports = function(grunt, config) {
         }
       }
     },
+
+    postcss: {
+          options: {
+              map: true,
+              processors: [
+                  require('autoprefixer')()
+              ]
+          },
+          autoprefixer: {
+              src: '<%= bsp.styles.compiledLessDir %>/**/*'
+          }
+      },
 
     watch: {
 

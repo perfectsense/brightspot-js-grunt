@@ -108,6 +108,18 @@ module.exports = function(grunt, config) {
         ]
       },
 
+      postcss: {
+          options: {
+              map: true,
+              processors: [
+                  require('autoprefixer')()
+              ]
+          },
+          autoprefixer: {
+              src: '<%= bsp.styles.compiledLessDir %>/**/*'
+          }
+      },
+
       compiledCSS: {
         files: [
           {
@@ -190,7 +202,7 @@ module.exports = function(grunt, config) {
 
       less: {
         files: ['<%= bsp.styles.srcDir %>' + '/**/*.less'],
-        tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'copy:compiledCSSForWatcher']
+        tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'bsp-autoprefixer', 'copy:compiledCSSForWatcher']
       },
 
       js: {
@@ -229,6 +241,18 @@ module.exports = function(grunt, config) {
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadTasks(__dirname + '/tasks');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-postcss');
+
+  grunt.task.registerTask('bsp-autoprefixer', 'Configure build destination.', function() {
+
+    if (grunt.config('bsp.styles.autoprefixer')) {
+        grunt.log.writeln('Running autoprefixer');
+        grunt.task.run(['postcss:autoprefixer']);
+    } else {
+       grunt.log.writeln('No bsp.styles.autoprefixer so skipping it...');
+    }
+    
+  });
 
   grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
     var done = this.async();
@@ -405,10 +429,11 @@ module.exports = function(grunt, config) {
     'copy:bower',
     'copy:styles',
     'less:compile',
+    'bsp-autoprefixer',
     'copy:scripts',
     'systemjs',
     'copy:less', // this copies less.js to allow for client side compilation
-    'copy:compiledCSS' // copies the compiled CSS to the target dir, this was the task performed by the autoprefixed before we removed it
+    'copy:compiledCSS' // copies the compiled CSS to the target dir
   ]);
 
   grunt.registerTask('default', [

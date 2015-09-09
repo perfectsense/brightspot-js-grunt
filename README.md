@@ -4,10 +4,10 @@ NOTE: Starting with version 2.0.0, bsp-grunt compiles [ECMAScript 6 modules](htt
 
 Standard set of Grunt configuration for Brightspot projects using the following:
 
-- [Autoprefixer](https://github.com/ai/autoprefixer)
 - [Brightspot](http://www.brightspotcms.com/)
 - [Grunt](http://gruntjs.com/)
 - [LESS](http://lesscss.org/)
+- [Autoprefixer](https://github.com/postcss/autoprefixer)
 - [SystemJS Builder](https://github.com/systemjs/builder)
 
 # Usage
@@ -75,19 +75,7 @@ Note that `require('bsp-grunt')(grunt, { ... })` replaces `grunt.initConfig({ ..
 
 ## Autoprefixer
 
-To change the supported list of browsers (see [https://github.com/ai/autoprefixer#browsers](https://github.com/ai/autoprefixer#browsers) for the) syntax):
-
-    module.exports = function(grunt) {
-      require('bsp-grunt')(grunt, {
-        ...,
-        autoprefixer: {
-          process: {
-            options: {
-              browsers: [ 'last 1 version', '> 1%', 'Explorer 7' ]
-            }
-          }
-        }
-      });
+If you want to run autoprefixer on your compiled CSS, set bsp.styles.autoprefixer to `true`. Since autoprefixer can use a `browserlist` file to do it's compilation, if you do not want the default `last 2 versions`, create a `browserlist` file in your root folder based on the following syntax: [Browserlist](https://github.com/ai/browserslist)
 
 ## HTML
 

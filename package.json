@@ -30,7 +30,7 @@
     "grunt-postcss" : "^0.6.0",
     "systemjs-builder": "^0.12.1",
     "grunt-contrib-watch"   : "~0.6.1",
-    "xml2json": "^0.7.1"
+    "xml2json": "^0.8.1"
   },
   "repository": {
     "type": "git",

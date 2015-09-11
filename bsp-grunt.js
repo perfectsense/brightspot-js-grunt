@@ -194,7 +194,7 @@ module.exports = function(grunt, config) {
               ]
           },
           autoprefixer: {
-              src: '<%= bsp.styles.compiledLessDir %>/**/*'
+              src: '<%= bsp.styles.compiledLessDir %>/**/*.css'
           }
       },
 
@@ -208,7 +208,7 @@ module.exports = function(grunt, config) {
       js: {
         files: [
           '<%= bsp.scripts.srcDir %>' + '/**/*.js',
-          '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js', 
+          '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js',
           '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js.map'
         ],
         tasks: ['bsp-config-dest', 'copy:scripts', 'systemjs', 'copy:compiledJSForWatcher']
@@ -251,7 +251,7 @@ module.exports = function(grunt, config) {
     } else {
        grunt.log.writeln('No bsp.styles.autoprefixer so skipping it...');
     }
-    
+
   });
 
   grunt.task.registerTask('bower-prune', 'Prune extraneous Bower packages.', function() {
@@ -343,7 +343,7 @@ module.exports = function(grunt, config) {
       // these get copied into the target, and base uses them, so we include them in here every time
       // if someone chooses to not use font awesome or bsp-carousel, it's ok, as they will only live in the
       // target folder and not be used rather than junking up the project repo
-      // 
+      //
       // on the other hand, if you're not using bootstrap, it means you are rewriting a LOT of CSS, so you
       // should instead just fork brightspot-base rather than trying to use this boilerplate
 
@@ -367,7 +367,7 @@ module.exports = function(grunt, config) {
         ]);
 
       }
-      
+
       if(!grunt.config.get('bsp.bower.fontawesome')) {
         grunt.config.set('bsp.bower.fontawesome', [
             {

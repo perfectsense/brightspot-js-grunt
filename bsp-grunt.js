@@ -222,7 +222,7 @@ module.exports = function(grunt, config) {
 
       json: {
         files : [
-            '/styleguide/**/*.json'
+            'styleguide/**/*.json'
         ],
         tasks: ['jsonlint']
       }

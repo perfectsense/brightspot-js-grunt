@@ -168,7 +168,7 @@ module.exports = function(grunt, config) {
 
     jsonlint: {
       all: {
-        src: [ '/styleguide/**/*.json' ]
+        src: [ 'styleguide/**/*.json' ]
       }
     },
 

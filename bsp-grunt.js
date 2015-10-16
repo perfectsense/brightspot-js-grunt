@@ -166,6 +166,12 @@ module.exports = function(grunt, config) {
       ]
     },
 
+    jsonlint: {
+      all: {
+        src: [ '/styleguide/**/*.json' ]
+      }
+    },
+
     less: {
       compile: {
         files: [
@@ -194,7 +200,7 @@ module.exports = function(grunt, config) {
               ]
           },
           autoprefixer: {
-              src: '<%= bsp.styles.compiledLessDir %>/**/*.css'
+              src: '<%= bsp.styles.compiledLessDir %>/**/*'
           }
       },
 
@@ -212,6 +218,13 @@ module.exports = function(grunt, config) {
           '!<%= bsp.scripts.srcDir %>' + '/**/*.min.js.map'
         ],
         tasks: ['bsp-config-dest', 'copy:scripts', 'systemjs', 'copy:compiledJSForWatcher']
+      },
+
+      json: {
+        files : [
+            '/styleguide/**/*.json'
+        ],
+        tasks: ['jsonlint']
       }
     },
 
@@ -242,6 +255,7 @@ module.exports = function(grunt, config) {
   grunt.loadTasks(__dirname + '/tasks');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-jsonlint');
 
   grunt.task.registerTask('bsp-autoprefixer', 'Configure build destination.', function() {
 

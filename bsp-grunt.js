@@ -367,7 +367,7 @@ module.exports = function(grunt, config) {
             {
                 cwd: 'less/',
                 src: '**/*',
-                dest: 'bower/bootstrap',
+                dest: '../styles/bower/bootstrap',
                 expand: true,
                 flatten: false
             },

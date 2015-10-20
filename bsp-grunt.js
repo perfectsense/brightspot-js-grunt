@@ -200,7 +200,7 @@ module.exports = function(grunt, config) {
               ]
           },
           autoprefixer: {
-              src: '<%= bsp.styles.compiledLessDir %>/**/*'
+              src: '<%= bsp.styles.compiledLessDir %>/**/*.css'
           }
       },
 

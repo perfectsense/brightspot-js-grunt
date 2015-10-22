@@ -37,6 +37,8 @@ module.exports = function(grunt) {
 			];
 			var child;
 			var fileBaseDir = path.resolve( path.dirname(file.src[0]) );
+			var polyfillFiles = [bspGruntDir + '/lib/browser-polyfill.js'];
+			var polyfillsConcat = '';
 			
 			/** script must be run from app root because of bug in systemjs-builder */
 			buildDeps.forEach(function(dep) {
@@ -65,12 +67,14 @@ module.exports = function(grunt) {
 					grunt.fail.fatal('Failed to write' + file.dest.red);
 				}
 				if (config.polyfills) {
+					if (config.polyfillFiles) {
+						polyfillFiles = config.polyfillFiles;
+					}
+					_.forEach(polyfillFiles, function(file) {
+						polyfillsConcat += grunt.file.read(file);
+					});
+					grunt.file.write(file.dest, polyfillsConcat + grunt.file.read(file.dest));
 					grunt.log.writeln('Prepended polyfills to',file.dest.cyan);
-					grunt.file.write(
-						file.dest,
-						grunt.file.read(bspGruntDir + '/lib/browser-polyfill.js') +
-						grunt.file.read(file.dest)
-					);
 				}
 				if (config.sourceMaps) {
 					if (grunt.file.exists(file.dest + '.map')) {

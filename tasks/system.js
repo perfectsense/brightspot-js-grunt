@@ -6,6 +6,7 @@ module.exports = function(grunt) {
 		var bspGruntDir = path.resolve(__dirname, '..');
 		var config = {
 			minify: true,
+			polyfills: true,
 			sourceMaps: true
 		};
 		var filesCount = 0;
@@ -14,6 +15,7 @@ module.exports = function(grunt) {
 		var options = this.options();
 		var buildDeps = [
 			{ src: bspGruntDir + '/lib/browser.js', dest: 'babel.js' },
+			{ src: bspGruntDir + '/lib/browser-polyfill.js', dest: 'browser-polyfill.js' },
 			{ src: bspGruntDir + '/lib/systemjs-build.js', dest: 'systemjs-build.js' },
 			{ src: bspGruntDir + '/lib/system.js', dest: 'system.js' }
 		];
@@ -61,6 +63,14 @@ module.exports = function(grunt) {
 					grunt.log.writeln('Wrote',file.dest.cyan);
 				} else {
 					grunt.fail.fatal('Failed to write' + file.dest.red);
+				}
+				if (config.polyfills) {
+					grunt.log.writeln('Prepended polyfills to',file.dest.cyan);
+					grunt.file.write(
+						file.dest,
+						grunt.file.read(bspGruntDir + '/lib/browser-polyfill.js') +
+						grunt.file.read(file.dest)
+					);
 				}
 				if (config.sourceMaps) {
 					if (grunt.file.exists(file.dest + '.map')) {

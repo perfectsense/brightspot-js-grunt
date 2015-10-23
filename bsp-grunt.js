@@ -232,7 +232,7 @@ module.exports = function(grunt, config) {
       dist: {
         options: {
           configFile: '<%= bsp.systemjs.configFile %>',
-          configOverrides: grunt.config('bsp.systemjs.configOverrides')
+          configOverrides: '<%= bsp.systemjs.configOverrides %>'
         },
         files: [
           { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }

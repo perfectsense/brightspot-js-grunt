@@ -6,6 +6,7 @@ module.exports = function(grunt) {
 		var bspGruntDir = path.resolve(__dirname, '..');
 		var config = {
 			minify: true,
+			polyfills: true,
 			sourceMaps: true
 		};
 		var filesCount = 0;
@@ -14,6 +15,7 @@ module.exports = function(grunt) {
 		var options = this.options();
 		var buildDeps = [
 			{ src: bspGruntDir + '/lib/browser.js', dest: 'babel.js' },
+			{ src: bspGruntDir + '/lib/browser-polyfill.js', dest: 'browser-polyfill.js' },
 			{ src: bspGruntDir + '/lib/systemjs-build.js', dest: 'systemjs-build.js' },
 			{ src: bspGruntDir + '/lib/system.js', dest: 'system.js' }
 		];
@@ -35,6 +37,8 @@ module.exports = function(grunt) {
 			];
 			var child;
 			var fileBaseDir = path.resolve( path.dirname(file.src[0]) );
+			var polyfillFiles = [bspGruntDir + '/lib/browser-polyfill.js'];
+			var polyfillsConcat = '';
 			
 			/** script must be run from app root because of bug in systemjs-builder */
 			buildDeps.forEach(function(dep) {
@@ -61,6 +65,16 @@ module.exports = function(grunt) {
 					grunt.log.writeln('Wrote',file.dest.cyan);
 				} else {
 					grunt.fail.fatal('Failed to write' + file.dest.red);
+				}
+				if (config.polyfills) {
+					if (config.polyfillFiles) {
+						polyfillFiles = config.polyfillFiles;
+					}
+					_.forEach(polyfillFiles, function(file) {
+						polyfillsConcat += grunt.file.read(file);
+					});
+					grunt.file.write(file.dest, polyfillsConcat + grunt.file.read(file.dest));
+					grunt.log.writeln('Prepended polyfills to',file.dest.cyan);
 				}
 				if (config.sourceMaps) {
 					if (grunt.file.exists(file.dest + '.map')) {

@@ -360,28 +360,6 @@ module.exports = function(grunt, config) {
       //
       // on the other hand, if you're not using bootstrap, it means you are rewriting a LOT of CSS, so you
       // should instead just fork brightspot-base rather than trying to use this boilerplate
-
-      if(!grunt.config.get('bsp.bower.bootstrap')) {
-
-        grunt.config.set('bsp.bower.bootstrap', [
-            {
-                cwd: 'less/',
-                src: '**/*',
-                dest: '../styles/bower/bootstrap',
-                expand: true,
-                flatten: false
-            },
-            {
-                cwd: 'js/',
-                src: '**/*',
-                dest: 'bower/bootstrap',
-                expand: true,
-                flatten: false
-            }
-        ]);
-
-      }
-
       if(!grunt.config.get('bsp.bower.fontawesome')) {
         grunt.config.set('bsp.bower.fontawesome', [
             {
@@ -402,12 +380,28 @@ module.exports = function(grunt, config) {
       if(!grunt.config.get('bsp.bower.vex')) {
         grunt.config.set('bsp.bower.vex', [
             {
-                cwd: 'js/',
-                        src: '**/*.js',
-                        dest: 'bower/vex',
-                        expand: true,
-                        flatten: false
+                src: 'js/vex.js',
+                dest: '.',
+                expand: true,
+                flatten: true
             }
+        ]);
+      }
+
+      if(!grunt.config.get('bsp.bower.bsp-modal')) {
+        grunt.config.set('bsp.bower.bsp-modal', [
+            {
+                src: 'src/js/*.js',
+                dest: '.',
+                expand: true,
+                flatten: true
+            },
+            {
+                src: 'src/css/*.css',
+                dest: '../styles/bower/bsp-modal',
+                expand: true,
+                flatten: true
+            },
         ]);
       }
 

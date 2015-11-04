@@ -333,6 +333,16 @@ module.exports = function(grunt, config) {
                   dest: '<%= bsp.scripts.devDir %>/' + basename,
                   src: path
                 });
+              } else {
+                // we are in this conditional if the main entry has a * selector
+                logs.push(path);
+
+                bowerFiles.push({
+                  dest: '<%= bsp.scripts.devDir %>',
+                  src: path,
+                  expand: true,
+                    flatten: true
+                });
               }
             });
           }
@@ -373,97 +383,6 @@ module.exports = function(grunt, config) {
                 dest: '../fonts',
                 expand: true,
                 flatten: true
-            }
-        ]);
-      }
-
-      if(!grunt.config.get('bsp.bower.vex')) {
-        grunt.config.set('bsp.bower.vex', [
-            {
-                src: 'js/vex.js',
-                dest: '.',
-                expand: true,
-                flatten: true
-            }
-        ]);
-      }
-
-      if(!grunt.config.get('bsp.bower.bsp-modal')) {
-        grunt.config.set('bsp.bower.bsp-modal', [
-            {
-                src: 'src/js/*.js',
-                dest: '.',
-                expand: true,
-                flatten: true
-            },
-            {
-                src: 'src/css/*.css',
-                dest: '../styles/bower/bsp-modal',
-                expand: true,
-                flatten: true
-            },
-        ]);
-      }
-
-      if(!grunt.config.get('bsp.bower.datetimepicker')) {
-        grunt.config.set('bsp.bower.datetimepicker', [
-            {
-                src: 'jquery.datetimepicker.js',
-                dest: 'jquery.datetimepicker.js'
-            },
-            {
-                src: 'jquery.datetimepicker.css',
-                dest: '../styles/bower/jquery.datetimepicker.css'
-            }
-        ]);
-      }
-
-      if(!grunt.config.get('bsp.bower.bsp-tabber')) {
-        grunt.config.set('bsp.bower.bsp-tabber', [
-            {
-                src: 'src/css/bsp-tabber.css',
-                dest: '../styles/bower/bsp-tabber.css'
-            },
-            {
-                cwd: 'src/js/',
-                src: '*.js',
-                dest: '',
-                expand: true
-            }
-        ]);
-      }
-
-      if(!grunt.config.get('bsp.bower.bsp-carousel')) {
-        grunt.config.set('bsp.bower.bsp-carousel', [
-            {
-                cwd: 'dist/bsp-carousel/',
-                src: 'bsp-carousel.css',
-                dest: '../styles/bower/bsp-carousel',
-                expand: true
-            },
-            {
-                cwd: 'dist/bsp-carousel/',
-                src: '*.js',
-                dest: '', //root of scripts
-                expand: true
-            },
-            {
-                cwd: 'dist/bsp-carousel-thumbnav/',
-                src: '*.js',
-                dest: '', //root of scripts
-                expand: true
-            },
-            {
-                cwd: 'src/less/bsp-carousel-gallery/',
-                src: '*.less',
-                dest: '../styles/bower/bsp-carousel-gallery',
-                expand: true
-            },
-            {
-                cwd: 'dist/bsp-carousel-gallery/',
-                src: '*.js',
-                dest: '', //root of scripts
-                expand: true
             }
         ]);
       }

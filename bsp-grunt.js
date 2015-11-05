@@ -289,12 +289,22 @@ module.exports = function(grunt, config) {
     BOWER.commands.list({ paths: true }).
       on('end', function(pathsByName) {
         var bowerDirectory = BOWER.config.directory;
+        var defaultFiles = { };
+
+        Object.keys(pathsByName).forEach(function (name) {
+          var files = grunt.file.readJSON(PATH.join(bowerDirectory, name, 'bower.json'))['brightspot-grunt-files'];
+
+          if (files) {
+            EXTEND(defaultFiles, files);
+          }
+        });
+
         var bowerFiles = grunt.config('copy.bower.files') || [ ];
 
         _.each(pathsByName, function(paths, name) {
           var logs = [ ];
           var cwd = PATH.join(bowerDirectory, name);
-          var files = (grunt.config('bsp.bower') || { })[name];
+          var files = (grunt.config('bsp.bower') || { })[name] || defaultFiles[name];
 
           if (files) {
             _.each(_.isArray(files) ? files : [ files ], function(file) {

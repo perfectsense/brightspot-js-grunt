@@ -150,8 +150,8 @@ module.exports = function(grunt, config) {
       less: {
         files: {
           '<%= bsp.scripts.devDir %>/less.js':
-              'node_modules/grunt-contrib-less/node_modules/less/' +
-              grunt.file.readJSON('node_modules/grunt-contrib-less/node_modules/less/bower.json').main
+              __dirname + '/node_modules/grunt-contrib-less/node_modules/less/' +
+              grunt.file.readJSON(__dirname + '/node_modules/grunt-contrib-less/node_modules/less/bower.json').main
         }
       }
     },
@@ -248,14 +248,8 @@ module.exports = function(grunt, config) {
 
   }, (config || { })));
 
-  grunt.loadNpmTasks('grunt-bower-install-simple');
-  grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.file.expand(__dirname + '/node_modules/grunt-*/tasks').forEach(grunt.loadTasks);
   grunt.loadTasks(__dirname + '/tasks');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-postcss');
-  grunt.loadNpmTasks('grunt-jsonlint');
 
   grunt.task.registerTask('bsp-autoprefixer', 'Configure build destination.', function() {
 

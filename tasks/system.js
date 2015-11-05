@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 			{ src: bspGruntDir + '/lib/system.js', dest: 'system.js' }
 		];
 		if (!options.configFile || !grunt.file.exists(options.configFile)) {
-			grunt.fail.fatal('SystemJS tasks needs a vaild configFile option');
+			return;
 		}
 		if (options.configOverrides) {
 			config = _.extend({}, config, options.configOverrides);

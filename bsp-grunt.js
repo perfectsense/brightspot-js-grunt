@@ -404,6 +404,7 @@ module.exports = function(grunt, config) {
     'brightspot-base',
     'bower-configure-copy',
     'copy:bower',
+    'create-binaries',
     'copy:styles',
     'less:compile',
     'bsp-autoprefixer',

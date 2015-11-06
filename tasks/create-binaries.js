@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         grunt.file.write(nodeBinPath + '.cmd', '@echo off\n' + cmdRealNodePath + ' %*\n@echo on');
         grunt.log.writeln('Created binary: node');
 
-        grunt.file.expand(path.join(__dirname, '..', 'node_modules/*/bin/*')).forEach(function (namePath) {
+        grunt.file.expand([ path.resolve(__dirname, '..').split(path.sep).join('/') + '/node_modules/*/bin/*', 'node_modules/*/bin/*' ]).forEach(function (namePath) {
             var name = path.basename(namePath);
             var binPath = path.join(binDirPath, name);
 

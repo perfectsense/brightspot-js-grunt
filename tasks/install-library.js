@@ -32,6 +32,7 @@ module.exports = function(grunt) {
 
                                 } else {
                                     grunt.file.copy(sourcePath, filePath);
+                                    grunt.log.writeln('Copied file: ' + filePath);
                                 }
                             }
                         });

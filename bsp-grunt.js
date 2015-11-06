@@ -286,7 +286,7 @@ module.exports = function(grunt, config) {
         var defaultFiles = { };
 
         Object.keys(pathsByName).forEach(function (name) {
-          var files = grunt.file.readJSON(PATH.join(bowerDirectory, name, 'bower.json'))['brightspot-grunt-files'];
+          var files = grunt.file.readJSON(PATH.join(bowerDirectory, name, 'bower.json'))['brightspot-copy-overrides'];
 
           if (files) {
             EXTEND(defaultFiles, files);

@@ -19,8 +19,7 @@
     "lodash": "^3.9.3",
     "path": "~0.4.9",
     "systemjs": "^0.18.2",
-    "systemjs-builder": "^0.12.1",
-    "systemjs-builder": "^0.12.1",
+    "systemjs-builder": "^0.14.10",
     "xml2json": "^0.8.1"
   },
   "description": "Standard set of Grunt configurations for Brightspot projects.",
@@ -35,5 +34,5 @@
     "url": "git://github.com/perfectsense/brightspot-js-grunt"
   },
   "files": ["tasks","lib","bsp-grunt.js"],
-  "version": "3.0.0"
+  "version": "3.0.1"
 }

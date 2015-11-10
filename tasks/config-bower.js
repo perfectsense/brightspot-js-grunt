@@ -102,8 +102,6 @@ module.exports = function(grunt) {
           grunt.log.writeln("Configured " + name + ": " + logs.join(", "));
         });
 
-        console.log(bowerFiles);
-
         grunt.config('copy.bower.files', bowerFiles);
         done();
       }).

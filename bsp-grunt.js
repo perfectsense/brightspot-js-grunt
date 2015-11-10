@@ -5,12 +5,6 @@ module.exports = function(grunt, config) {
 
   grunt.initConfig(EXTEND(true, { }, {
     bsp: {
-      brightspotBase: {
-        srcDir: 'bower_components/brightspot-base/src/main/webapp',
-        assetsDir: '<%= bsp.brightspotBase.srcDir %>/assets',
-        templatesDir: '<%= bsp.brightspotBase.srcDir %>/render',
-        enable: false
-      },
 
       maven: {
         pom: process.cwd() + '/pom.xml',
@@ -54,23 +48,6 @@ module.exports = function(grunt, config) {
 
       bower: {
         files: [ ]
-      },
-
-      brightspotBase: {
-        files: [
-          {
-            cwd: '<%= bsp.brightspotBase.assetsDir %>',
-            dest: '<%= bsp.maven.destDir %>/assets',
-            expand: true,
-            src: '**/*'
-          },
-          {
-            cwd: '<%= bsp.brightspotBase.templatesDir %>',
-            dest: '<%= bsp.maven.destDir %>/render',
-            expand: true,
-            src: '**/*'
-          }
-        ]
       },
 
       scripts: {
@@ -235,12 +212,6 @@ module.exports = function(grunt, config) {
           { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }
         ]
       }
-    },
-
-    'brightspot-base': {
-      options: {
-        enable: '<%= bsp.brightspotBase.enable %>'
-      }
     }
 
   }, (config || { })));
@@ -249,45 +220,11 @@ module.exports = function(grunt, config) {
 
   grunt.loadTasks(__dirname + '/tasks');
 
-  grunt.task.registerTask('brightspot-base', 'Copies brightspot base files to build directory', function() {
-    if (this.options().enable) {
-      grunt.task.run(['copy:brightspotBase']);
-
-      // here we setup so bower copy tasks so that the gruntfile for a brightspot base project can be clean
-      // these get copied into the target, and base uses them, so we include them in here every time
-      // if someone chooses to not use font awesome or bsp-carousel, it's ok, as they will only live in the
-      // target folder and not be used rather than junking up the project repo
-      //
-      // on the other hand, if you're not using bootstrap, it means you are rewriting a LOT of CSS, so you
-      // should instead just fork brightspot-base rather than trying to use this boilerplate
-      if(!grunt.config.get('bsp.bower.fontawesome')) {
-        grunt.config.set('bsp.bower.fontawesome', [
-            {
-                src: 'less/*',
-                dest: '../styles/bower/fontawesome',
-                expand: true,
-                flatten: true
-            },
-            {
-                src: 'fonts/*',
-                dest: '../fonts',
-                expand: true,
-                flatten: true
-            }
-        ]);
-      }
-
-    } else {
-      grunt.log.writeln('brightspot-base disabled, skipping');
-    }
-  });
-
   grunt.registerTask('bsp', [
     'bsp-config-dest', // configure the destination that maven creates
     'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
     'bower-prune',
     'bower-install-simple:all',
-    'brightspot-base',
     'bower-configure-copy',
     'copy:bower',
     'create-binaries',

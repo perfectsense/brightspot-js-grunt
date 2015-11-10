@@ -2,6 +2,7 @@ module.exports = function(grunt) {
 
   grunt.task.registerTask('bower-configure-copy', 'Configure Bower package files to be copied.', function() {
     var _ = require('lodash');
+    var EXTEND = require('extend');
     var PATH = require('path');
     var BOWER = require('bower');
     var done = this.async();
@@ -13,7 +14,7 @@ module.exports = function(grunt) {
 
         // we can have a brightspot-copy-overrides entry in our main project.json and this will override any
         // bowered in overrides as well any default main entries
-        var bowerProjectOverrides = grunt.file.readJSON('bower.json')['brightspot-copy-overrides'];
+        var bowerProjectOverrides = grunt.file.readJSON('bower.json')['brightspot-copy-overrides'] || {};
 
         Object.keys(pathsByName).forEach(function (name) {
           var files = grunt.file.readJSON(PATH.join(bowerDirectory, name, 'bower.json'))['brightspot-copy-overrides'];
@@ -38,11 +39,9 @@ module.exports = function(grunt) {
             _.each(bowerOverride, function(entry){
 
               entry.src = PATH.join(bowerDirectory, name) + '/' + entry.src;
-              entry.dest = '<%= bsp.maven.destDir %>/assets/' + entry.dest;
+              entry.dest = '<%= bsp.scripts.devDir %>/' + entry.dest;
 
               logs.push(JSON.stringify(entry.src));
-
-
             });
 
           } else {

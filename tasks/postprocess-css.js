@@ -1,4 +1,3 @@
-
 module.exports = function(grunt) {
   grunt.task.registerTask('bsp-autoprefixer', 'Configure build destination.', function() {
 

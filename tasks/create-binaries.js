@@ -4,7 +4,7 @@ var path = require('path');
 module.exports = function(grunt) {
 	grunt.registerTask('create-binaries', 'Creates helper binaries.', function() {
         var targetPath = grunt.config('bsp.maven.targetDir');
-        
+
 		if (!targetPath) {
             return;
         }
@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         var binDirPath = path.join(targetPath, 'bin');
         var realNodePath = path.join('node', 'node');
         var shRealNodePath;
-        var cmdRealNodePath; 
+        var cmdRealNodePath;
 
         if (fs.existsSync(realNodePath)) {
             realNodePath = path.relative(binDirPath, realNodePath);
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
             shRealNodePath = cmdRealNodePath = 'node';
         }
 
-        var nodeBinPath = path.join(binDirPath, 'node'); 
+        var nodeBinPath = path.join(binDirPath, 'node');
 
         grunt.file.write(nodeBinPath, '#/bin/sh\n' + shRealNodePath + ' "$@"');
         fs.chmodSync(nodeBinPath, 0755);

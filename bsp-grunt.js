@@ -153,7 +153,7 @@ module.exports = function(grunt, config) {
         watch: {
 
             less: {
-                files: ['<%= bsp.styles.srcDir %>' + '/**/*.less'],
+                files: ['<%= bsp.styles.srcDir %>' + '/**/*.less', '<%= bsp.styles.srcDir %>' + '/**/*.vars'],
                 tasks: ['bsp-config-dest', 'copy:styles', 'less:compile', 'bsp-autoprefixer', 'copy:compiledCSS']
             },
 

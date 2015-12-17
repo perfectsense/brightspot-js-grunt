@@ -140,7 +140,7 @@ module.exports = function(grunt, config) {
 
         postcss: {
                     options: {
-                            map: true,
+                            map: grunt.config('bsp.styles.options.map'),
                             processors: [
                                     require('autoprefixer')()
                             ]

@@ -37,7 +37,7 @@ module.exports = function(grunt) {
             );
 
             builder
-                .buildStatic(path.basename(file.src[0]), path.resolve(file.dest), {sourceMaps: true})
+                .buildStatic(path.basename(file.src[0]), path.resolve(file.dest), config)
                 .then(function() {
 
                     // Check that the minified file was generated, otherwise throw

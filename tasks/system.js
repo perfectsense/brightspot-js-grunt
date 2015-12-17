@@ -15,7 +15,7 @@ module.exports = function(grunt) {
 		var options = this.options();
 		var buildDeps = [
 			{ src: bspGruntDir + '/lib/browser.js', dest: 'babel.js' },
-			{ src: bspGruntDir + '/lib/browser-polyfill.js', dest: 'browser-polyfill.js' },
+			{ src: bspGruntDir + '/lib/browser-polyfill.min.js', dest: 'browser-polyfill.min.js' },
 			{ src: bspGruntDir + '/lib/systemjs-build.js', dest: 'systemjs-build.js' },
 			{ src: bspGruntDir + '/lib/system.js', dest: 'system.js' }
 		];
@@ -37,9 +37,9 @@ module.exports = function(grunt) {
 			];
 			var child;
 			var fileBaseDir = path.resolve( path.dirname(file.src[0]) );
-			var polyfillFiles = [bspGruntDir + '/lib/browser-polyfill.js'];
+			var polyfillFiles = [bspGruntDir + '/lib/browser-polyfill.min.js'];
 			var polyfillsConcat = '';
-			
+
 			/** script must be run from app root because of bug in systemjs-builder */
 			buildDeps.forEach(function(dep) {
 				grunt.file.copy(dep.src, fileBaseDir + '/' + dep.dest);
@@ -84,7 +84,7 @@ module.exports = function(grunt) {
 					}
 				}
 				filesDone++;
-				
+
 				if (filesDone === filesCount) {
 					done();
 				}

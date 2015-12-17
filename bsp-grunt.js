@@ -194,7 +194,7 @@ module.exports = function(grunt, config) {
 
     postcss: {
           options: {
-              map: true,
+              map: false,
               processors: [
                   require('autoprefixer')()
               ]

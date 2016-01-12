@@ -18,6 +18,7 @@ module.exports = function(grunt) {
         var options = this.options();
 
         if (!options.configFile || !grunt.file.exists(options.configFile)) {
+            done();
             return;
         }
 

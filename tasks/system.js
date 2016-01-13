@@ -12,15 +12,15 @@ module.exports = function(grunt) {
             sourceMaps: true
         };
 
+        var builderConfig = {
+            defaultJSExtensions: true,
+            transpiler: 'babel'
+        }
+
         var filesCount = 0;
         var filesDone = 0;
         var done = this.async();
         var options = this.options();
-
-        if (!options.configFile || !grunt.file.exists(options.configFile)) {
-            done();
-            return;
-        }
 
         if (options.configOverrides) {
             config = _.extend({}, config, options.configOverrides);
@@ -33,9 +33,15 @@ module.exports = function(grunt) {
             var polyfillsConcat = '';
 
             var builder = new Builder(
-                path.dirname(file.src[0]),
-                path.resolve(options.configFile)
+                path.dirname(file.src[0])
             );
+
+            builder.config(builderConfig);
+
+            if (grunt.file.exists(options.configFile)) {
+                var builderConfigPath = path.resolve(options.configFile);
+                builder.loadConfig(builderConfigPath);
+            }
 
             builder
                 .buildStatic(path.basename(file.src[0]), path.resolve(file.dest), config)

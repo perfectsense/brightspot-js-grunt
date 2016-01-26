@@ -1,0 +1,3 @@
+# Using this file as a template, create an `.env` file at the root of your project to set environment specific variables for node.
+
+MODE = development

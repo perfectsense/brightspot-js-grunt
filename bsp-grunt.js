@@ -1,3 +1,6 @@
+// Load environment specific variables (fails silently)
+require('dotenv').config({silent: true});
+
 module.exports = function(grunt, config) {
     var EXTEND = require('extend');
     var Builder = require('systemjs-builder');

@@ -1,6 +1,6 @@
 {
   "name": "bsp-grunt",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Standard set of Grunt configurations for Brightspot projects.",
   "keywords": [
     "brightspot",
@@ -20,6 +20,7 @@
     "autoprefixer": "6.1.0",
     "babel-core": "5.6.20",
     "bower": "1.6.5",
+    "dotenv": "^2.0.0",
     "es6-module-loader": "0.17.8",
     "extend": "3.0.0",
     "grunt-bower-install-simple": "1.1.4",

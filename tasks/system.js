@@ -6,6 +6,12 @@ module.exports = function(grunt) {
     grunt.registerMultiTask('systemjs', 'Compiles systemjs apps', function() {
         var bspGruntDir = path.resolve(__dirname, '..');
 
+        var envConfigOverrides = {};
+        if (process.env.MODE === "development"){
+            envConfigOverrides.minify = false;
+            envConfigOverrides.sourceMaps = false;
+        }
+
         var config = {
             minify: true,
             polyfills: true,
@@ -22,9 +28,16 @@ module.exports = function(grunt) {
         var done = this.async();
         var options = this.options();
 
+        // environment specific config should trump the default config
+        config = _.extend({}, config, envConfigOverrides);
+
+        // the project gruntfile's config trumps all previous configs
         if (options.configOverrides) {
-            config = _.extend({}, config, options.configOverrides);
+            config = _.extend(config, options.configOverrides);
         }
+
+        grunt.log.ok("SystemJs configured with:");
+        console.dir(config);
 
         this.files.forEach(function(file) {
             filesCount++;

@@ -5,17 +5,21 @@ module.exports = function(grunt, config) {
     var EXTEND = require('extend');
     var Builder = require('systemjs-builder');
     var builder = new Builder();
-    var fs = require('fs');
 
     // npm 3 flattens the node_modules directory structure, so 
     // we need to look for modules at multiple paths
-    var lessContribDir = __dirname + '/node_modules/grunt-contrib-less/node_modules/less/';
-    try {
-        fs.statSync(lessContribDir);
-    } catch(e) {
-        lessContribDir = process.cwd() + '/node_modules/less/';
-        fs.statSync(lessContribDir);
-    }
+    var lessContribDir;
+    grunt.file.recurse(
+        process.cwd() + '/node_modules',
+        function(abspath, rootdir, subdir, filename) {
+            if (/\/less$/.test(subdir) && !lessContribDir) {
+                var subDirFullPath = process.cwd() + '/node_modules/' + subdir;
+                if (grunt.file.exists(subDirFullPath + '/bower.json')) {
+                    lessContribDir = subDirFullPath;
+                }
+            }
+        }
+    );
 
     grunt.initConfig(EXTEND(true, { }, {
         bsp: {

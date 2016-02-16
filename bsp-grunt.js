@@ -5,6 +5,17 @@ module.exports = function(grunt, config) {
     var EXTEND = require('extend');
     var Builder = require('systemjs-builder');
     var builder = new Builder();
+    var fs = require('fs');
+
+    // npm 3 flattens the node_modules directory structure, so 
+    // we need to look for modules at multiple paths
+    var lessContribDir = __dirname + '/node_modules/grunt-contrib-less/node_modules/less/';
+    try {
+        fs.statSync(lessContribDir);
+    } catch(e) {
+        lessContribDir = process.cwd() + '/node_modules/less/';
+        fs.statSync(lessContribDir);
+    }
 
     grunt.initConfig(EXTEND(true, { }, {
         bsp: {
@@ -99,8 +110,8 @@ module.exports = function(grunt, config) {
             less: {
                 files: {
                     '<%= bsp.scripts.devDir %>/less.js':
-                            __dirname + '/node_modules/grunt-contrib-less/node_modules/less/' +
-                            grunt.file.readJSON(__dirname + '/node_modules/grunt-contrib-less/node_modules/less/bower.json').main
+                            lessContribDir +
+                            grunt.file.readJSON(lessContribDir + '/bower.json').main
                 }
             }
         },
@@ -191,7 +202,10 @@ module.exports = function(grunt, config) {
 
     }, (config || { })));
 
+    // look in two places because npm3 downloads modules to 
+    // a flat directory structure
     grunt.file.expand(__dirname + '/node_modules/grunt-*/tasks').forEach(grunt.loadTasks);
+    grunt.file.expand(process.cwd() + '/node_modules/grunt-*/tasks').forEach(grunt.loadTasks);
 
     grunt.loadTasks(__dirname + '/tasks');
 

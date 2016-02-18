@@ -30,7 +30,7 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-jsonlint": "1.0.6",
     "grunt-postcss": "0.7.1",
-    "lodash": "3.10.1",
+    "lodash": "^4.0.0",
     "path": "0.12.7",
     "systemjs-builder": "0.14.10",
     "xml2js": "0.4.15"

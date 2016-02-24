@@ -106,6 +106,9 @@ module.exports = function(grunt, config) {
         },
 
         clean: {
+            destCSS: [
+                '<%= bsp.styles.minDir %>'
+            ],
             sourceCSS: [
                 '<%= bsp.styles.srcDir %>' + '**/*<%= bsp.styles.ext %>'
             ],
@@ -197,6 +200,7 @@ module.exports = function(grunt, config) {
 
     grunt.registerTask('bsp', [
         'bsp-config-dest', // configure the destination that maven creates
+        'clean:destCSS', // clean the entire dest dir (in case any files have been renamed or deleted)
         'clean:sourceCSS', // clean up the source directories of any compiled CSS that were copied there by a watcher
         'bower-prune',
         'bower-install-simple:all',

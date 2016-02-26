@@ -1,6 +1,6 @@
 {
   "name": "bsp-grunt",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Standard set of Grunt configurations for Brightspot projects.",
   "keywords": [
     "brightspot",

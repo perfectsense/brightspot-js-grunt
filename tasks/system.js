@@ -19,8 +19,7 @@ module.exports = function(grunt) {
         };
 
         var builderConfig = {
-            defaultJSExtensions: true,
-            transpiler: 'babel'
+            defaultJSExtensions: true
         }
 
         var filesCount = 0;
@@ -42,7 +41,7 @@ module.exports = function(grunt) {
         this.files.forEach(function(file) {
             filesCount++;
 
-            var polyfillFiles = [bspGruntDir + '/lib/browser-polyfill.js'];
+            var polyfillFiles = [bspGruntDir + '/node_modules/babel-polyfill/dist/polyfill.js'];
             var polyfillsConcat = '';
 
             var builder = new Builder(
@@ -62,18 +61,20 @@ module.exports = function(grunt) {
 
                     // Check that the minified file was generated, otherwise throw
                     if (grunt.file.exists(file.dest)) {
-                        grunt.log.writeln('Wrote:', file.dest.cyan);
+                        grunt.log.writeln('Transpiler wrote:', file.dest.cyan);
                     } else {
-                        grunt.fail.fatal('Failed to write: ' + file.dest.red);
+                        grunt.fail.fatal('Transpiler failed to write: ' + file.dest.red);
                     }
 
-                    // Append the specified polyfil files to the minified source
+                    // Prepend the specified polyfill files to the source
                     if (config.polyfills) {
-                        if (config.polyfillFiles) {
-                            polyfillFiles = config.polyfillFiles;
+                        if (polyfillFiles) {
+                            grunt.log.writeln("Polyfilling with: ", polyfillFiles);
+
                             _.forEach(polyfillFiles, function(file) {
                                 polyfillsConcat += grunt.file.read(file);
                             });
+
                             grunt.file.write(file.dest, polyfillsConcat + grunt.file.read(file.dest));
                             grunt.log.writeln('Prepended polyfills to: ', file.dest.cyan);
                         }

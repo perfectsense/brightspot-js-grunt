@@ -6,6 +6,9 @@ module.exports = function(grunt, config) {
     var Builder = require('systemjs-builder');
     var builder = new Builder();
 
+    // Display a list of execution times for Grunt tasks
+    require('time-grunt')(grunt);
+
     grunt.initConfig(EXTEND(true, { }, {
         bsp: {
 

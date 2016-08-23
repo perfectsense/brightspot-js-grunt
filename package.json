@@ -21,7 +21,7 @@
     "babel-polyfill": "^6.9.1",
     "bower": "^1.7.6",
     "dotenv": "^2.0.0",
-    "es6-module-loader": "0.17.8",
+    "es-module-loader": "1.0.3",
     "extend": "3.0.0",
     "grunt-bower-install-simple": "1.2.3",
     "grunt-contrib-clean": "1.0.0",

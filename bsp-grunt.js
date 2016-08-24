@@ -193,6 +193,21 @@ module.exports = function(grunt, config) {
                     { '<%= bsp.systemjs.destFile %>': '<%= bsp.systemjs.srcFile %>' }
                 ]
             }
+        },
+
+        documentation: {
+            js: {
+                files: [{
+                    'expand': true,
+                    'cwd': '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
+                    'src': ['**/*.js']
+                }],
+                options: {
+                    format: 'json',
+                    filename: 'js.json',
+                    destination: 'styleguide/_docs'
+                }
+            },
         }
 
     }, (config || { })));
@@ -214,6 +229,7 @@ module.exports = function(grunt, config) {
         'less:compile',
         'bsp-autoprefixer',
         'copy:scripts',
+        'documentation:js',
         'systemjs',
         'copy:less', // this copies less.js to allow for client side compilation
         'copy:compiledCSS' // copies the compiled CSS to the target dir

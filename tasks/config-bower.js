@@ -31,6 +31,13 @@ module.exports = function(grunt) {
                     var cwd = PATH.join(bowerDirectory, name);
                     var files = (grunt.config('bsp.bower') || { })[name] || defaultFiles[name];
                     var bowerOverride = bowerProjectOverrides[name];
+                    var bowerFile = grunt.file.readJSON(cwd + '/bower.json');
+
+                    // Keep a reference of bower component path(s) that ask to have documentation generated
+                    var jsdocEnable = bowerFile['brightspot-jsdoc-enable'] || false;
+                    if (jsdocEnable) {
+                        grunt.config.set('jsdocBowerSrc', cwd);
+                    }
 
                     // if we have an override for this entry, use it, and get out
                     if(bowerOverride) {

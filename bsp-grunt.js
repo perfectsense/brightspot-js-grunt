@@ -195,19 +195,13 @@ module.exports = function(grunt, config) {
             }
         },
 
-        documentation: {
-            js: {
-                files: [{
-                    'expand': true,
-                    'cwd': '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>',
-                    'src': ['**/*.js']
-                }],
-                options: {
-                    format: 'json',
-                    filename: 'js.json',
-                    destination: 'styleguide/_docs'
-                }
-            },
+        // Additional JSDoc configuration is done in 'tasks/config-jsdoc.js'
+        jsdoc : {
+            dist : {
+                src: [
+                    '<%= bsp.maven.srcDir %>/<%= bsp.scripts.dir %>/**/*.js'
+                ]
+            }
         }
 
     }, (config || { })));
@@ -229,7 +223,8 @@ module.exports = function(grunt, config) {
         'less:compile',
         'bsp-autoprefixer',
         'copy:scripts',
-        'documentation:js',
+        'configure-jsdoc',
+        'jsdoc',
         'systemjs',
         'copy:less', // this copies less.js to allow for client side compilation
         'copy:compiledCSS' // copies the compiled CSS to the target dir

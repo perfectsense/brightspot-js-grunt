@@ -8,8 +8,9 @@
   ],
   "files": [
     "tasks",
-    "lib",
-    "bsp-grunt.js"
+    "bsp-grunt.js",
+    "config.js",
+    "jsdocConfig.json"
   ],
   "main": "bsp-grunt.js",
   "repository": {

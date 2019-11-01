@@ -22,7 +22,7 @@
     "bower": "^1.7.6",
     "dotenv": "^2.0.0",
     "es6-module-loader": "0.17.8",
-    "extend": "3.0.0",
+    "extend": "3.0.2",
     "grunt-bower-install-simple": "1.1.4",
     "grunt-contrib-clean": "0.7.0",
     "grunt-contrib-copy": "0.8.2",

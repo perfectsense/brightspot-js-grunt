@@ -1,6 +1,6 @@
 {
   "name": "bsp-grunt",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Standard set of Grunt configurations for Brightspot projects.",
   "keywords": [
     "brightspot",
@@ -14,7 +14,7 @@
   "main": "bsp-grunt.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/perfectsense/brightspot-js-grunt"
+    "url": "git://github.com/jcteo/brightspot-js-grunt"
   },
   "dependencies": {
     "autoprefixer": "6.1.0",
@@ -23,7 +23,7 @@
     "dotenv": "^2.0.0",
     "es6-module-loader": "0.17.8",
     "extend": "3.0.0",
-    "grunt-bower-install-simple": "1.1.4",
+    "grunt-bower-install-simple": "1.2.0",
     "grunt-contrib-clean": "0.7.0",
     "grunt-contrib-copy": "0.8.2",
     "grunt-contrib-less": "1.1.0",
@@ -34,5 +34,8 @@
     "path": "0.12.7",
     "systemjs-builder": "0.14.10",
     "xml2js": "0.4.16"
+  },
+  "devDependencies": {
+    "grunt": "0.4.5"
   }
 }
